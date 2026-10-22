@@ -46,6 +46,12 @@ Matching Round 2 captures use the `gabbro-background-*.png` names. Additional Em
 
 The `media/` folder also contains Graphite and custom teal captures from the Emery emulator.
 
+The default segmented numerals use optical compensation: uncapped vertical strokes reach nearly the full digit height, the narrow `1` sits centrally, and top and bottom bars are shorter. These fixed 13:48 native captures show the change on both targets:
+
+| Pebble Time 2 before | Pebble Time 2 balanced | Pebble Round 2 before | Pebble Round 2 balanced |
+|---|---|---|---|
+| ![Original segmented numerals on Emery](media/emery-numerals-before-1348.png) | ![Balanced segmented numerals on Emery](media/emery-numerals-balanced-1348.png) | ![Original segmented numerals on Gabbro](media/gabbro-numerals-before-1348.png) | ![Balanced segmented numerals on Gabbro](media/gabbro-numerals-balanced-1348.png) |
+
 Tilt examples at a fixed 2:15 are in `media/emery-tilt-left.png`, `media/emery-tilt-right.png`, `media/gabbro-tilt-left.png`, and `media/gabbro-tilt-right.png`. The effect uses the watch accelerometer to infer wrist tilt relative to gravity. It cannot sense the viewer's eye position. Pebble's limited color palette makes the shifting shading three discrete bands.
 
 ![Time 2 at left tilt on Pebble Time 2](media/emery-tilt-left.png)
@@ -71,4 +77,4 @@ The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator b
 
 ## Release state
 
-Version 0.4.0 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.
+Version 0.4.1 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.

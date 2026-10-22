@@ -135,3 +135,16 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] Twelve native previews show each background on Gabbro.
 - [x] The production PBW passes `python3 execution/verify_watchface.py`.
 - [x] A fresh verifier reviews the final PBW and previews.
+
+## Segmented numeral optical balance — 2026-10-22
+
+- [x] The digit 1 reaches the same visual top as 3 at 13:48.
+- [x] The digit 4 reaches the same visual bottom as 8 at 13:48.
+- [x] Top horizontal bars are shorter than the previous renderer.
+- [x] Bottom horizontal bars are shorter than the previous renderer.
+- [x] The digit 1 is centered within its numeral cell.
+- [x] The time 13:48 is readable at 200×228 on Emery.
+- [x] The time 13:48 is readable at 260×260 on Gabbro.
+- [x] The alternate text font choices remain unaffected.
+- [x] The production PBW passes `python3 execution/verify_watchface.py`.
+- [x] A fresh verifier reviews the native before/after captures.

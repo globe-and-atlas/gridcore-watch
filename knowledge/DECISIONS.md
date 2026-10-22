@@ -35,3 +35,8 @@
 - Keep the existing 16-pixel Blueprint grid as the default so upgrades preserve the face's current appearance.
 - Render 12 backgrounds from native Pebble drawing primitives. Reuse the active day, night, grayscale, or custom palette's grid color so pattern and color choices remain independent.
 - Keep the pattern behind the time and date. Do not include a separate colored bitmap resource for each combination.
+
+## 2026-10-22 — Segmented numeral optical balance
+
+- Extend vertical strokes nearly to the cell edge when the digit has no cap at that edge. This gives `1` and `4` an apparent height comparable to capped digits such as `3` and `8`.
+- Center the narrow `1` within its cell. Shorten and slightly thin the top and bottom cap segments so capped numerals carry less horizontal mass. Keep the 12 font choices and clock spacing unchanged.

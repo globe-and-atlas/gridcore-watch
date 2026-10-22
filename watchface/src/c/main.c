@@ -348,16 +348,23 @@ static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h,
   static const uint8_t bits[10]={63,6,91,79,102,109,125,7,127,111};
   if (value<0 || value>9) return;
   int t=w>=36?8:7;
+  uint8_t mask=bits[value];
+  int cap_inset=t/2+2;
+  int upper_y=(mask&1)?y+t+2:y+2;
+  int upper_end=y+h/2-t/2-2;
+  int lower_y=y+h/2+t/2+2;
+  int lower_end=(mask&(1<<3))?y+h-t-2:y+h-2;
+  int right_x=value==1?x+(w-t)/2:x+w-t;
   Rect seg[7]={
-    {x+t/2,y,w-t,t},
-    {x+w-t,y+t+2,t,h/2-t/2-t-4},
-    {x+w-t,y+h/2+t/2+2,t,h/2-t/2-t-4},
-    {x+t/2,y+h-t,w-t,t},
-    {x,y+h/2+t/2+2,t,h/2-t/2-t-4},
-    {x,y+t+2,t,h/2-t/2-t-4},
+    {x+cap_inset,y,w-2*cap_inset,t-1},
+    {right_x,upper_y,t,upper_end-upper_y},
+    {right_x,lower_y,t,lower_end-lower_y},
+    {x+cap_inset,y+h-t+1,w-2*cap_inset,t-1},
+    {x,lower_y,t,lower_end-lower_y},
+    {x,upper_y,t,upper_end-upper_y},
     {x+t/2,y+h/2-t/2,w-t,t}
   };
-  for (int i=0;i<7;i++) if (bits[value]&(1<<i))
+  for (int i=0;i<7;i++) if (mask&(1<<i))
     prism(ctx,bounds,seg[i],p,front_pass);
 }
 

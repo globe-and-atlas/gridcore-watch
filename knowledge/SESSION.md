@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Add 12 selectable background patterns to Gridcore for Pebble Time 2 and Pebble Round 2.
+**Goal:** Balance the segmented numerals so 1 and 4 read at the same apparent size as 3 and 8.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Local version 0.4.0 contains 12 background patterns for Emery and Gabbro; native previews and independent verification passed. Store listing not created.
+**Status:** Local 0.4.1 numeral balance verified on Emery and Gabbro with complete native before/after captures; production PBW and settings tests pass. Store listing not created; no physical-watch test.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,8 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Segmented numeral balance: extended uncapped verticals, centered 1, and shortened cap bars. Native 13:48 captures on Emery and Gabbro include time and date; first after captures were transitional and replaced after emulator settle. Production 0.4.1 PBW verifier, Node settings test, Python smoke test, and fresh independent visual review passed.
+- 2026-10-22 - Numeral balance scope: compare native 13:48 at 24-hour format before and after. Extend uncapped vertical strokes, center the narrow 1, trim the top and bottom bars, then rebuild and review both targets.
 - 2026-10-22 - Background scope: preserve Blueprint grid as the default, add 11 distinct patterns controlled separately from colors, capture all 12 at fixed 12:15 on both native targets, then rebuild production and seek fresh review.
 - 2026-10-22 - Background implementation: 12 native patterns and a new persisted setting added without changing the six looks or existing custom color keys. All 24 fixed-time native captures are distinct and include complete time/date content. Starfield persisted through an Emery reinstall; Radar rings also rendered in Graphite. Production v0.4.0 PBW, bundle verifier, and Node settings tests pass. Fresh review pending.
 - 2026-10-22 - Palette QA: Tunnel's old grid color vanished against its background after Pebble quantization. Raised its grid color to `0x5A3A1B` and recaptured a visible amber Diamond mesh on native Emery. Production v0.4.0 was clean-built and passed the bundle verifier and Node settings tests after the fix.
