@@ -1,0 +1,22 @@
+{
+  "name": "gridcore-watch",
+  "author": "Daniel Bally",
+  "version": "0.1.0",
+  "private": true,
+  "keywords": ["pebble-app"],
+  "pebble": {
+    "displayName": "Gridcore",
+    "uuid": "2062ace2-4528-4975-95b6-fc2cbf11de0d",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": ["emery", "gabbro"],
+    "watchapp": {"watchface": true},
+    "capabilities": ["configurable"],
+    "messageKeys": [
+      "SETTING_LOOK", "SETTING_DATE", "SETTING_MOTION",
+      "SETTING_BG", "SETTING_FRONT", "SETTING_DEPTH", "SETTING_GRID"
+    ],
+    "resources": {"media": []}
+  },
+  "dependencies": {"@rebble/clay": "1.1.0"}
+}

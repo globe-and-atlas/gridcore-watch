@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** [Primary objective of this session]
-**Agent:** [Antigravity AI | Claude Code CLI | OpenAI Codex | etc.]
-**Handoff-from:** [agent name | none]
-**Handoff-type:** [new-project | continuation | cold-eyes | QC | loop | pickup]
-**Status:** [In Progress | Blocked | Completed]
+**Goal:** Build Gridcore for Pebble Time 2 and Pebble Round 2.
+**Agent:** OpenAI Codex (GPT-6.1-sol)
+**Handoff-from:** none
+**Handoff-type:** new-project
+**Status:** In Progress
 
 ## Handoff — YYYY-MM-DD HH:MM
 - **Completed**: [Specific features/files actually finished]
@@ -17,4 +17,8 @@
 
 ---
 ## Checkpoints
-- YYYY-MM-DD HH:MM - Step name
+- 2026-10-19 22:12 - Scaffold and contract: created project from workflow-python template; set dual-platform and settings validation criteria in task.md and directives/build_watchface.md. Next: implement native watchface.
+
+## Checkpoint Log
+
+- 2026-10-19 22:10 — commit: chore: initialize project from template
