@@ -8,5 +8,5 @@
 | [ERRORS.md](ERRORS.md) | log | 2026-10-22: emulator recovery, color quantization, and foreground shift fixes |
 | [FAILURES/2026-10-22_foreground_jump/context.md](FAILURES/2026-10-22_foreground_jump/context.md) | failure | 2026-10-22: direction-dependent foreground centering caused visible GIF jumps |
 | [domain/deps.md](domain/deps.md) | domain | 2026-10-22: Pebble SDK, Clay, serif font assets, and optional Pillow media tooling |
-| [procedural/build_and_check.md](procedural/build_and_check.md) | procedural | 2026-10-22: dual-target build and eight-angle orbit store capture workflow |
+| [procedural/build_and_check.md](procedural/build_and_check.md) | procedural | 2026-10-22: dual-target build, eight-angle orbit capture, and public listing verification workflow |
 | [REFLECTIONS.jsonl](REFLECTIONS.jsonl) | reflection | 2026-10-22: emulator and evidence lessons |

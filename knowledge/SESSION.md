@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Let wrist tilt orbit Way Back's echo around fixed foreground digits, then show a clockwise eight-angle sweep in each platform GIF.
+**Goal:** Publish Way Back 0.7.0 with clockwise orbit previews for Pebble Time 2 and Pebble Round 2.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Version 0.7.0 production build and native orbit media pass local checks and independent review on both targets. Store listing not created; no physical-watch test.
+**Status:** Version 0.7.0 is Listed at https://apps.repebble.com/370092d6402c4a0bbc8fb01b. The public listing shows both platform galleries and the published release. Physical-watch motion and battery checks remain open.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,7 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Store publication: uploaded the clean 0.7.0 dual-platform PBW, description, release notes, and five assets per target through the signed-in Pebble Developer Dashboard. The public listing is Listed at `https://apps.repebble.com/370092d6402c4a0bbc8fb01b`; it displays version 0.7.0, Time 2 and Round 2 support, and a GIF followed by four stills for both Emery and Gabbro. Fresh independent review confirmed both GIFs byte-identical, all eight stills pixel-identical, and the public PBW byte-identical (714211 bytes, SHA256 `8738a0f7e63cb45c933efa66cfa8394ece47283baf8b6f45500b008e0fb1f313`) to local artifacts. Both galleries loaded at native target dimensions. Physical-watch motion and battery remain unverified.
 - 2026-10-22 - Clockwise orbit: blended the default diagonal echo toward full two-axis wrist tilt while keeping the foreground independent. Captured eight native fixture angles for each of five compositions on Emery and Gabbro; both 40-frame GIFs pass adjacent-frame visibility and exact foreground-mask checks. The grayscale graphite cycle now uses the existing None decoration option. Production 0.7.0 PBW passes the dual-target verifier, settings test, JS syntax, Python smoke test, and diff check. Native production Emery left/right and up/down, Gabbro left/right and up/down, and Gabbro reverse checks all change echo pixels while keeping the foreground mask fixed. Fresh independent review confirmed both GIFs, exact still-frame matches, and dual-target PBW with no blocking findings; physical-watch feel and store upload remain open.
 - 2026-10-22 - Fixed foreground after user caught a jump in the direction GIF. Removed direction-dependent depth bias from segmented and text numeral origins; echoes alone use the reverse and live tilt offsets. Regenerated both native GIFs and eight stills. Every paired PNG and decoded GIF frame retained an identical foreground numeral mask; echo pixels changed by thousands. Live Gabbro opposite-tilt captures changed 3,521 pixels with zero foreground-mask differences. Clean production v0.6.1 PBW, bundle verifier, settings test, JS syntax, Python smoke test, diff check, and fresh independent review passed. Physical-watch checks and RePebble upload remain open.
 - 2026-10-22 - Reversible echo direction and store media final: persisted reverse setting defaults off and flips static depth plus wrist tilt offsets. Native Emery/Gabbro fixture captures show five matched forward/reverse pairs at fixed 13:48 and upward tilt. Reduced echo counts for amber wireframe and graphite serif after contact-sheet review. Final GIFs are 10 frames at 200×228 (31,466 bytes) and 260×260 (37,090 bytes); four stills per target complete each five-slot asset set. Live Gabbro accelerometer check showed opposite directions, and a Gabbro reinstall retained the reverse choice. Clean production v0.6.0 PBW, bundle verifier, settings test, JS syntax, Python smoke test, media checks, diff check, and fresh independent review pass. Physical-watch battery and store publication remain open.

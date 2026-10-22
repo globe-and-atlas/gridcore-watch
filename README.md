@@ -25,7 +25,7 @@ The animated previews hold the time at 13:48 while the echo makes a clockwise ei
 ![Way Back options on Pebble Time 2](media/way-back-emery-options.gif)
 ![Way Back options on Pebble Round 2](media/way-back-gabbro-options.gif)
 
-Four native-resolution stills per target are in `media/way-back-emery-store-01-*.png` through `04-*.png` and the matching `gabbro` files. Together with each platform's GIF, they fill five listing image slots. These are candidate listing assets; they have not been uploaded.
+Four native-resolution stills per target are in `media/way-back-emery-store-01-*.png` through `04-*.png` and the matching `gabbro` files. Together with each platform's GIF, they fill five listing image slots. The GIF is first in each public gallery.
 
 Decoration previews from the native Emery emulator:
 
@@ -107,4 +107,4 @@ The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator b
 
 ## Release state
 
-Version 0.7.0 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.
+Version 0.7.0 was published as a Listed watchface on the [Pebble App Store](https://apps.repebble.com/370092d6402c4a0bbc8fb01b) on 2026-10-22. The public listing shows Emery and Gabbro media and offers the PBW download. Physical-watch motion and battery behavior have not been tested.

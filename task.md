@@ -192,20 +192,25 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] The release PBW contains the echo setting on both targets.
 - [x] A fresh verifier reviews the final echo captures.
 
-## Before Way Back store publication — 2026-10-22
+## Way Back store publication and follow-up — 2026-10-22
 
-- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Time 2.
-- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Round 2.
-- [ ] Check watch battery behavior with 12 echoes enabled.
+- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Time 2 after release.
+- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Round 2 after release.
+- [ ] Check watch battery behavior with 12 echoes enabled after release.
 - [x] Create an Emery GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
 - [x] Create a Gabbro GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
 - [x] Keep each GIF under the project's 4.4 MB media budget.
 - [x] Choose no more than five image assets per target.
-- [ ] Prepare the Way Back listing description.
-- [ ] Upload the production PBW to the Pebble Developer Dashboard.
-- [ ] Confirm the saved Emery media in the dashboard.
-- [ ] Confirm the saved Gabbro media in the dashboard.
-- [ ] Confirm the public listing serves version 0.6.1 to both targets.
+- [x] Prepare the Way Back listing description.
+- [x] Upload the production PBW to the Pebble Developer Dashboard.
+- [x] Confirm the saved Emery media on the public listing.
+- [x] Confirm the saved Gabbro media on the public listing.
+- [x] Confirm the public listing serves version 0.7.0 to both targets.
+- [x] The public PBW matches the local production PBW byte for byte.
+- [x] The public Emery GIF matches the local GIF byte for byte.
+- [x] The public Gabbro GIF matches the local GIF byte for byte.
+- [x] Each public still matches its local image pixels.
+- [x] A fresh verifier reviews the public release.
 
 ## Way Back product rename — 2026-10-22
 
