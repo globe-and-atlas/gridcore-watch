@@ -23,3 +23,9 @@
 - Preserve the existing four custom color values as the day palette, then add four independent night values. This keeps earlier saved color choices intact.
 - Offer Day, Night, and Auto. Auto uses the watch's local hour, with configurable night start (6–10 p.m.) and day start (5–9 a.m.); defaults are 7 p.m. and 7 a.m. The minute tick already redraws the face at those boundaries.
 - Give each built-in look a night palette so the mode works outside Custom colors. Keep the night grid visible after quantization to Pebble's 64-color palette.
+
+## 2026-10-22 — Numerals and decorations
+
+- Keep the existing segmented clock as the default while offering eleven alternate numeral styles. Pebble system fonts cover several digital choices; four SIL Open Font License assets add larger geometric and classic silhouettes. Their embedded resources contain only digits and colon.
+- Draw the depth trail before a fixed foreground for every numeral choice. Text faces use two offset color bands to balance depth with legibility at 200 pixels wide.
+- Keep the measured grid independent from eight selectable decorations. Use a circular ring for the full-frame option on Gabbro.

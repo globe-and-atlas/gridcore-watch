@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Add day and night color settings to Gridcore for Pebble Time 2 and Pebble Round 2.
+**Goal:** Add selectable numeral styles and corner decorations to Gridcore for Pebble Time 2 and Pebble Round 2.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Day/night settings complete in local version 0.2.0 PBW; independent verification passed. Store listing not created.
+**Status:** Local version 0.3.0 built for both targets; 12 numeral styles and eight decorations captured at fixed 12:15. Independent verification passed. Store listing not created.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,11 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Style scope: add 12 persistent numeral choices, eight persistent decoration choices, native fixed-time previews on both targets, and a production rebuild after fixtures.
+- 2026-10-22 - Implementation: four SIL Open Font License source fonts were subset to digits and colon; text faces draw two color depth bands before a fixed foreground. The modified Libre Baskerville subset has the internal family and UI name Gridcore Book. Decorations remain independent of the grid; Round 2 uses a circular frame.
+- 2026-10-22 - Native QA: 12:15 captures produced for all 12 fonts and eight decorations on Emery and Gabbro. A Bodoni tilt comparison changed 2,261 depth pixels while the bright foreground mask was identical. New choices persisted through reinstall. Production v0.3.0 PBW, bundle verifier, Node settings tests, and syntax check pass. Fresh review pending.
+- 2026-10-22 - Fresh review caught an undersized Droid Serif option and a reserved font name on the modified Libre Baskerville asset. Replaced the small option with Space Grotesk, renamed the subset to Gridcore Book, added a second depth band, recaptured the affected styles at fixed 12:15, and clean-built production v0.3.0. Independent final recheck pending.
+- 2026-10-22 - Independent final recheck passed 12 font choices, eight decorations, all 40 complete native captures, settings persistence paths, and the dual-target PBW. Final production Emery motion captures changed 2,532 clock-region pixels between opposite tilts while the bright foreground mask had zero changes. Physical-watch motion and restart behavior remain untested.
 - 2026-10-22 - Day/night scope: preserve existing day colors, add independently configurable night colors, selectable Day/Night/Auto mode, configurable clock-hour boundaries, and native Emery/Gabbro checks. Existing date formats remain shared across modes.
 - 2026-10-22 14:07 - Day/night implementation: built-in day/night palettes and eight custom color controls render on native Emery and Gabbro; Auto changed at 19:00 and 07:00 with default bounds, and changed at user-selected hours. Fourteen settings fit a 256-byte inbox message. Custom day/night palettes persisted through a reinstall. The emulator later timed out after repeated clock and screenshot commands; complete earlier captures remain valid. Final 0.2.0 production rebuild and fresh review pending.
 - 2026-10-22 - Final production build: clean PBW v0.2.0 includes Emery and Gabbro; `python3 execution/verify_watchface.py`, Node settings test, and JS syntax check pass. Independent reviewer is examining current source and native media.

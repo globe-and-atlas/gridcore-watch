@@ -19,6 +19,8 @@ assert.equal(old.SETTING_DATE, 3);
 assert.equal(old.SETTING_MODE, 2);
 assert.equal(old.SETTING_NIGHT_START, 19);
 assert.equal(old.SETTING_DAY_START, 7);
+assert.equal(old.SETTING_DECORATION, 0);
+assert.equal(old.SETTING_FONT, 0);
 
 const custom = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 1,
@@ -27,7 +29,9 @@ const custom = settings.settingsMessage(JSON.stringify({
   SETTING_NIGHT_BG: 0x010203,
   SETTING_NIGHT_FRONT: 0xEEEEEE,
   SETTING_NIGHT_DEPTH: 0x336699,
-  SETTING_NIGHT_GRID: 0x111111
+  SETTING_NIGHT_GRID: 0x111111,
+  SETTING_DECORATION: 5,
+  SETTING_FONT: 11
 }));
 assert.equal(custom.SETTING_MODE, 1);
 assert.equal(custom.SETTING_NIGHT_START, 22);
@@ -36,19 +40,27 @@ assert.equal(custom.SETTING_NIGHT_BG, 0x010203);
 assert.equal(custom.SETTING_NIGHT_FRONT, 0xEEEEEE);
 assert.equal(custom.SETTING_NIGHT_DEPTH, 0x336699);
 assert.equal(custom.SETTING_NIGHT_GRID, 0x111111);
+assert.equal(custom.SETTING_DECORATION, 5);
+assert.equal(custom.SETTING_FONT, 11);
 
 const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 3,
   SETTING_NIGHT_START: 9,
   SETTING_DAY_START: 21,
-  SETTING_NIGHT_BG: -1
+  SETTING_NIGHT_BG: -1,
+  SETTING_DECORATION: 8,
+  SETTING_FONT: 12
 }));
 assert.equal(invalid.SETTING_MODE, 2);
 assert.equal(invalid.SETTING_NIGHT_START, 19);
 assert.equal(invalid.SETTING_DAY_START, 7);
 assert.equal(invalid.SETTING_NIGHT_BG, 0);
+assert.equal(invalid.SETTING_DECORATION, 0);
+assert.equal(invalid.SETTING_FONT, 0);
 
 const config = settings.configuration();
 const keys = new Set(config.map(function (item) { return item.messageKey; }).filter(Boolean));
 for (const key of Object.keys(custom)) assert(keys.has(key), `missing Clay control: ${key}`);
+assert.equal(config.find((item) => item.messageKey === 'SETTING_DECORATION').options.length, 8);
+assert.equal(config.find((item) => item.messageKey === 'SETTING_FONT').options.length, 12);
 console.log('PASS: Gridcore settings defaults, migration, validation, and controls');

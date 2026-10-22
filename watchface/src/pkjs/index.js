@@ -14,7 +14,9 @@ var DEFAULTS = {
   SETTING_NIGHT_BG: 0x000000,
   SETTING_NIGHT_FRONT: 0xC0C8D0,
   SETTING_NIGHT_DEPTH: 0x336688,
-  SETTING_NIGHT_GRID: 0x273759
+  SETTING_NIGHT_GRID: 0x273759,
+  SETTING_DECORATION: 0,
+  SETTING_FONT: 0
 };
 
 function integer(value, min, max, fallback) {
@@ -39,7 +41,9 @@ function settingsMessage(raw) {
     SETTING_NIGHT_BG: integer(saved.SETTING_NIGHT_BG, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_BG),
     SETTING_NIGHT_FRONT: integer(saved.SETTING_NIGHT_FRONT, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_FRONT),
     SETTING_NIGHT_DEPTH: integer(saved.SETTING_NIGHT_DEPTH, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_DEPTH),
-    SETTING_NIGHT_GRID: integer(saved.SETTING_NIGHT_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_GRID)
+    SETTING_NIGHT_GRID: integer(saved.SETTING_NIGHT_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_GRID),
+    SETTING_DECORATION: integer(saved.SETTING_DECORATION, 0, 7, DEFAULTS.SETTING_DECORATION),
+    SETTING_FONT: integer(saved.SETTING_FONT, 0, 11, DEFAULTS.SETTING_FONT)
   };
 }
 
@@ -60,6 +64,30 @@ function configuration() {
       {label: 'YYYY-MM-DD', value: '1'},
       {label: 'MM/DD/YYYY', value: '2'},
       {label: 'DD/MM/YYYY', value: '3'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_DECORATION', label: 'Corner decoration', defaultValue: '0', options: [
+      {label: 'Registration corners', value: '0'},
+      {label: 'Short brackets', value: '1'},
+      {label: 'Double brackets', value: '2'},
+      {label: 'Crosshairs', value: '3'},
+      {label: 'Edge ticks', value: '4'},
+      {label: 'Dots', value: '5'},
+      {label: 'Full frame', value: '6'},
+      {label: 'None', value: '7'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_FONT', label: 'Time numerals', defaultValue: '0', options: [
+      {label: 'Prism segments', value: '0'},
+      {label: 'Open wire segments', value: '1'},
+      {label: 'Leco bold', value: '2'},
+      {label: 'Leco regular', value: '3'},
+      {label: 'Leco compact', value: '4'},
+      {label: 'Roboto bold', value: '5'},
+      {label: 'Bitham bold', value: '6'},
+      {label: 'Bitham light', value: '7'},
+      {label: 'Cormorant Garamond', value: '8'},
+      {label: 'Bodoni Moda', value: '9'},
+      {label: 'Space Grotesk', value: '10'},
+      {label: 'Gridcore Book', value: '11'}
     ]},
     {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
       {label: 'Auto by time', value: '2'},

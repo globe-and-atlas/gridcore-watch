@@ -27,6 +27,8 @@ def build(ctx):
             ctx.env.append_value('DEFINES', 'GRIDCORE_MODE=%d' % int(os.environ.get('GRIDCORE_MODE', '2')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_ANGLE_X=%d' % int(os.environ.get('GRIDCORE_ANGLE_X', '0')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_ANGLE_Y=%d' % int(os.environ.get('GRIDCORE_ANGLE_Y', '0')))
+            ctx.env.append_value('DEFINES', 'GRIDCORE_DECORATION=%d' % int(os.environ.get('GRIDCORE_DECORATION', '0')))
+            ctx.env.append_value('DEFINES', 'GRIDCORE_FONT=%d' % int(os.environ.get('GRIDCORE_FONT', '0')))
         ctx.set_group(ctx.env.PLATFORM_NAME)
         elf = '{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
         ctx.pbl_build(source=ctx.path.ant_glob('src/c/**/*.c'), target=elf, bin_type='app')

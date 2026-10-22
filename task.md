@@ -85,3 +85,30 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] Native Emery day and night captures are reviewed.
 - [x] Native Gabbro day and night captures are reviewed.
 - [x] A fresh verifier reviews the final settings and native captures.
+
+## Corner decorations — 2026-10-22
+
+- [x] Registration corners render at native resolution.
+- [x] Short brackets render at native resolution.
+- [x] Double brackets render at native resolution.
+- [x] Crosshairs render at native resolution.
+- [x] Edge ticks render at native resolution.
+- [x] Dots render at native resolution.
+- [x] A full frame renders at native resolution.
+- [x] None removes the decoration.
+- [x] The decoration choice persists after restart.
+- [x] The decoration choice works on Emery.
+- [x] The decoration choice works on Gabbro.
+- [x] Native screenshots show the eight choices.
+- [x] The production PBW passes `python3 execution/verify_watchface.py`.
+- [x] A fresh verifier reviews the final decoration choices.
+
+## Numeral styles — 2026-10-22
+
+- [x] Twelve numeral choices appear in phone settings.
+- [x] Each numeral choice displays a readable 12:15 on Emery.
+- [x] Each numeral choice displays a readable 12:15 on Gabbro.
+- [x] Each numeral choice retains a fixed foreground during tilt.
+- [x] Each numeral choice has a moving depth trail when motion is on.
+- [x] The numeral choice persists after restart.
+- [x] Native previews show the numeral choices.
