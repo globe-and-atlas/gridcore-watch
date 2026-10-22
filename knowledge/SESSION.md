@@ -31,3 +31,4 @@
 - 2026-10-19 22:10 — commit: chore: initialize project from template
 - 2026-10-21 22:40 — commit: feat: implement Gridcore watchface for Pebble with customizable themes and motion effects | .tmp/.gitkeep,directives/build_watchface.md,knowledge/SESSION.md,task.md,watchface/package.json
 - 2026-10-22 10:05 — commit: feat: finish dual-platform Gridcore face with chamfered digits | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
+- 2026-10-22 10:22 — commit: feat: add live tilt parallax to Gridcore | README.md,knowledge/DECISIONS.md,knowledge/REFLECTIONS.jsonl,knowledge/SESSION.md,knowledge/procedural/build_and_check.md
