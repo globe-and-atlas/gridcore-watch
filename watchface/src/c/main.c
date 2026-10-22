@@ -18,7 +18,7 @@ static Layer *s_layer;
 static AppTimer *s_reveal_timer;
 static int s_look = 0;  // Color Slices
 static int s_date = 1;  // YYYY-MM-DD
-static int s_motion = 1;
+static int s_motion = 0;
 static int s_bg = 0x0A1020;
 static int s_front = 0xF4F4DB;
 static int s_depth = 0x49B8D0;
@@ -26,6 +26,8 @@ static int s_grid = 0x273759;
 static int s_phase = 4;
 static int s_tilt = 0;
 static bool s_raise_armed;
+static bool s_accel_subscribed;
+static time_t s_last_reveal;
 
 static int clamp(int value, int lo, int hi) {
   return value < lo ? lo : (value > hi ? hi : value);
@@ -44,8 +46,8 @@ static Palette palette(void) {
     bg=0xE5E8DF; front=0x143948; depth=0x47798E;
     middle=0xB7D1D2; accent=0xAA633F; grid=0xB8C9C9;
   } else if (s_look == 4) {
-    bg=0x141719; front=0xF4F3ED; depth=0xA9B3B6;
-    middle=0x566164; accent=0xF0EFE8; grid=0x3A4144;
+    bg=0x000000; front=0xFFFFFF; depth=0xAAAAAA;
+    middle=0x555555; accent=0xFFFFFF; grid=0x444444;
   } else if (s_look == 5) {
     bg=s_bg; front=s_front; depth=s_depth;
     middle=s_depth; accent=s_front; grid=s_grid;
@@ -77,6 +79,33 @@ static void fill_rect(GContext *ctx, GRect bounds, Rect r, GColor color) {
   GPoint p=point(bounds,r.x,r.y);
   graphics_context_set_fill_color(ctx,color);
   graphics_fill_rect(ctx,GRect(p.x,p.y,r.w,r.h),0,GCornerNone);
+}
+
+static void fill_chamfered_segment(GContext *ctx, GRect bounds, Rect r,
+                                  GColor color) {
+  const int cut=3;
+  GPoint points[6];
+  if (r.w>=r.h) {
+    points[0]=point(bounds,r.x+cut,r.y);
+    points[1]=point(bounds,r.x+r.w-cut,r.y);
+    points[2]=point(bounds,r.x+r.w,r.y+r.h/2);
+    points[3]=point(bounds,r.x+r.w-cut,r.y+r.h);
+    points[4]=point(bounds,r.x+cut,r.y+r.h);
+    points[5]=point(bounds,r.x,r.y+r.h/2);
+  } else {
+    points[0]=point(bounds,r.x+r.w/2,r.y);
+    points[1]=point(bounds,r.x+r.w,r.y+cut);
+    points[2]=point(bounds,r.x+r.w,r.y+r.h-cut);
+    points[3]=point(bounds,r.x+r.w/2,r.y+r.h);
+    points[4]=point(bounds,r.x,r.y+r.h-cut);
+    points[5]=point(bounds,r.x,r.y+cut);
+  }
+  GPathInfo info={.num_points=6,.points=points};
+  GPath *path=gpath_create(&info);
+  if (!path) return;
+  graphics_context_set_fill_color(ctx,color);
+  gpath_draw_filled(ctx,path);
+  gpath_destroy(path);
 }
 
 static void fill_quad(GContext *ctx, GRect bounds,
@@ -111,16 +140,10 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p) {
   int dy=((s_look==2?7:-9)*s_phase)/4;
   Rect rear={r.x+dx,r.y+dy,r.w,r.h};
   if (s_look==0) {
-    // Three structural slices behind the fixed, high-contrast front.
-    GColor slices[3]={p.accent,p.middle,p.depth};
-    for (int i=1;i<=3;i++) {
-      Rect layer={r.x+dx*i/3,r.y+dy*i/3,r.w,r.h};
-      outline(ctx,bounds,layer,slices[i-1],1);
-    }
-    int x[4]={r.x,r.x+r.w,r.x+r.w,r.x};
-    int y[4]={r.y,r.y,r.y+r.h,r.y+r.h};
-    for (int i=0;i<4;i++)
-      line(ctx,bounds,x[i],y[i],x[i]+dx,y[i]+dy,p.middle,1);
+    outline(ctx,bounds,rear,p.depth,1);
+    line(ctx,bounds,r.x,r.y,r.x+dx,r.y+dy,p.accent,1);
+    line(ctx,bounds,r.x+r.w,r.y,r.x+r.w+dx,r.y+dy,p.middle,1);
+    line(ctx,bounds,r.x+r.w,r.y+r.h,r.x+r.w+dx,r.y+r.h+dy,p.middle,1);
   } else {
     fill_rect(ctx,bounds,rear,p.middle);
     outline(ctx,bounds,rear,p.depth,1);
@@ -138,8 +161,7 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p) {
       line(ctx,bounds,x,y,x+dx,y+dy,p.depth,1);
     }
   }
-  fill_rect(ctx,bounds,r,p.bg);
-  outline(ctx,bounds,r,p.front,2);
+  fill_chamfered_segment(ctx,bounds,r,p.front);
   if (s_look==1 || s_look==3 || s_look==4) {
     if (r.w>r.h) {
       for (int x=r.x+8;x<r.x+r.w-4;x+=8)
@@ -158,11 +180,11 @@ static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h) 
   int t=w>=36?8:7;
   Rect seg[7]={
     {x+t/2,y,w-t,t},
-    {x+w-t,y+t/2,t,h/2-t/2},
-    {x+w-t,y+h/2,t,h/2-t/2},
+    {x+w-t,y+t+2,t,h/2-t/2-t-4},
+    {x+w-t,y+h/2+t/2+2,t,h/2-t/2-t-4},
     {x+t/2,y+h-t,w-t,t},
-    {x,y+h/2,t,h/2-t/2},
-    {x,y+t/2,t,h/2-t/2},
+    {x,y+h/2+t/2+2,t,h/2-t/2-t-4},
+    {x,y+t+2,t,h/2-t/2-t-4},
     {x+t/2,y+h/2-t/2,w-t,t}
   };
   for (int i=0;i<7;i++) if (bits[value]&(1<<i)) prism(ctx,bounds,seg[i],p);
@@ -217,9 +239,6 @@ static void redraw(Layer *layer,GContext *ctx) {
   fixture.tm_hour=GRIDCORE_HOUR;
   fixture.tm_min=GRIDCORE_MINUTE;
   local=&fixture;
-  s_look=GRIDCORE_LOOK;
-  s_date=GRIDCORE_DATE;
-  p=palette();
 #endif
   draw_time(ctx,bounds,local);
   draw_date(ctx,bounds,local,p);
@@ -230,14 +249,17 @@ static void reveal_tick(void *context) {
   s_reveal_timer=NULL;
   if (s_phase<4) {
     s_phase++;
+    if (s_phase==4) s_tilt=0;
     layer_mark_dirty(s_layer);
     if (s_phase<4) s_reveal_timer=app_timer_register(180,reveal_tick,NULL);
-    else s_tilt=0;
   }
 }
 
 static void start_reveal(int tilt) {
   if (!s_motion) return;
+  time_t now=time(NULL);
+  if (s_last_reveal && now-s_last_reveal<5) return;
+  s_last_reveal=now;
   if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
   s_tilt=clamp(tilt,-2,2);
   s_phase=0;
@@ -258,6 +280,24 @@ static void accel_handler(AccelData *data,uint32_t count) {
       s_raise_armed=false;
       start_reveal(data[i].x/350);
     }
+  }
+}
+
+static void update_motion_subscription(void) {
+  if (s_motion && !s_accel_subscribed) {
+    s_raise_armed=false;
+    accel_tap_service_subscribe(tap_handler);
+    accel_data_service_subscribe(10,accel_handler);
+    accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+    s_accel_subscribed=true;
+  } else if (!s_motion && s_accel_subscribed) {
+    accel_data_service_unsubscribe();
+    accel_tap_service_unsubscribe();
+    s_accel_subscribed=false;
+    if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
+    s_reveal_timer=NULL;
+    s_phase=4;
+    s_tilt=0;
   }
 }
 
@@ -287,6 +327,7 @@ static void inbox(DictionaryIterator *iter,void *context) {
   Tuple *motion=dict_find(iter,MESSAGE_KEY_SETTING_MOTION);
   if (motion && (motion->value->int32==0 || motion->value->int32==1)) {
     s_motion=motion->value->int32; persist_write_int(PERSIST_MOTION,s_motion);
+    update_motion_subscription();
   }
   read_color(iter,MESSAGE_KEY_SETTING_BG,&s_bg,PERSIST_BG);
   read_color(iter,MESSAGE_KEY_SETTING_FRONT,&s_front,PERSIST_FRONT);
@@ -317,20 +358,25 @@ int main(void) {
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
   s_motion=clamp(s_motion,0,1);
+#ifdef GRIDCORE_FIXTURE
+  s_look=GRIDCORE_LOOK;
+  s_date=GRIDCORE_DATE;
+  s_motion=0;
+#endif
   s_window=window_create();
   window_set_window_handlers(s_window,(WindowHandlers){.load=load,.unload=unload});
   window_stack_push(s_window,true);
   tick_timer_service_subscribe(MINUTE_UNIT,tick);
-  accel_tap_service_subscribe(tap_handler);
-  accel_data_service_subscribe(10,accel_handler);
-  accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
+  update_motion_subscription();
   app_message_register_inbox_received(inbox);
   app_message_open(128,64);
   app_event_loop();
   if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
   app_message_deregister_callbacks();
-  accel_data_service_unsubscribe();
-  accel_tap_service_unsubscribe();
+  if (s_accel_subscribed) {
+    accel_data_service_unsubscribe();
+    accel_tap_service_unsubscribe();
+  }
   tick_timer_service_unsubscribe();
   window_destroy(s_window);
 }

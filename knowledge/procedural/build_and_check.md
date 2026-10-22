@@ -1,0 +1,14 @@
+---
+generated_by: "OpenAI Codex (GPT-6.1-sol)"
+timestamp: "2026-10-22T10:01:05-05:00"
+---
+# Build and check Gridcore
+
+1. Run `npm ci`, `pebble clean`, and `pebble build` from `watchface/`.
+2. Run `python3 execution/verify_watchface.py` from the project root. Inspect the PBW for both platform binaries.
+3. Install into one emulator at a time: `pebble install --emulator emery` or `pebble install --emulator gabbro`. Install twice if a stale watchface remains visible.
+4. Capture exact palette pixels with `pebble screenshot --emulator <platform> --no-open --no-correction <absolute output path>`.
+5. Inspect the screenshot before accepting it. The emulator sometimes returns a transitional frame even after the draw callback has completed; capture again until the time, date, and registration corners are all present.
+6. For deterministic art checks, clean and build with `GRIDCORE_FIXTURE=1 GRIDCORE_HOUR=2 GRIDCORE_MINUTE=15 GRIDCORE_LOOK=0 GRIDCORE_DATE=1`. Clean again and rebuild without fixture variables before keeping the PBW.
+
+Avoid `-v` on `pebble install`: verbose output can include the emulator's OAuth token. Keep `.lock-waf*` and `.tmp/` out of Git. If Emery boot hangs, back up its SDK data, run `pebble wipe` without `--everything`, then retry. The wipe affects shared emulator state.

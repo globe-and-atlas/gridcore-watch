@@ -3,7 +3,7 @@ var Clay = require('@rebble/clay');
 var DEFAULTS = {
   SETTING_LOOK: 0,
   SETTING_DATE: 1,
-  SETTING_MOTION: 1,
+  SETTING_MOTION: 0,
   SETTING_BG: 0x0A1020,
   SETTING_FRONT: 0xF4F4DB,
   SETTING_DEPTH: 0x49B8D0,
@@ -32,7 +32,7 @@ function settingsMessage(raw) {
 function configuration() {
   return [
     {type: 'heading', defaultValue: 'Gridcore'},
-    {type: 'text', defaultValue: 'Dimensional time for Pebble Time 2 and Round 2. A wrist raise briefly reveals the depth, then the digits rest.'},
+    {type: 'text', defaultValue: 'Dimensional time for Pebble Time 2 and Round 2. Optional motion briefly reveals the depth, then the digits rest.'},
     {type: 'select', messageKey: 'SETTING_LOOK', label: 'Look', defaultValue: '0', options: [
       {label: 'Color Slices', value: '0'},
       {label: 'Lift', value: '1'},
@@ -47,7 +47,7 @@ function configuration() {
       {label: 'MM/DD/YYYY', value: '2'},
       {label: 'DD/MM/YYYY', value: '3'}
     ]},
-    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Wrist reveal', defaultValue: true},
+    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Wrist reveal', defaultValue: false},
     {type: 'heading', defaultValue: 'Custom colors'},
     {type: 'text', defaultValue: 'Choose Custom colors above to use these four picks.'},
     {type: 'color', messageKey: 'SETTING_BG', label: 'Background', defaultValue: '0A1020', sunlight: false, allowGray: true},

@@ -1,28 +1,34 @@
-# gridcore-watch
+# Gridcore
 
-Scaffolded from `project-template` using the `workflow-python` profile.
+Gridcore is a dimensional digital watchface for Pebble Time 2 (Emery) and Pebble Round 2 (Gabbro). Its clock uses solid chamfered segments with colored depth on a measured grid.
 
-## Project Profile
+The face includes Color Slices, Lift, Tunnel, Daylight Blueprint, Graphite, and a custom color look. Custom mode exposes background, digit front, digit depth, and grid colors. The date can be Off, YYYY-MM-DD, MM/DD/YYYY, or DD/MM/YYYY. It follows the watch's 12-hour or 24-hour preference. Optional wrist motion briefly changes the depth projection.
 
-- `profile`: `workflow-python`
-- `deploy`: `local-only`
-- `runtime`: `pebble`
-- `loop_mode`: `data`
-- `knowledge_level`: `heavy`
+## Native previews
 
-## Workshop Standard
+![Gridcore on Pebble Time 2](media/emery-color-slices.png)
+![Gridcore on Pebble Round 2](media/gabbro-color-slices.png)
 
-This project follows the 3-layer architecture:
+The `media/` folder also contains Graphite and custom teal captures from the Emery emulator.
 
-```text
-directives/     Layer 1 — What to do
-agent           Layer 2 — Decide → Delegate → Verify
-execution/      Layer 3 — Deterministic execution (when this profile uses it)
+## Build
+
+From `watchface/`:
+
+```sh
+npm ci
+pebble clean
+pebble build
 ```
 
-## Next Steps
+Check the bundle from the project root:
 
-1. Fill in the actual project description here.
-2. Update `task.md` with the first real milestone.
-3. Populate `knowledge/context.md`.
-4. Draft the first workflow directive in `directives/`.
+```sh
+python3 execution/verify_watchface.py
+```
+
+The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator backups live under ignored `.tmp/`. See `directives/build_watchface.md` and `knowledge/procedural/build_and_check.md` for fixture and capture steps.
+
+## Release state
+
+Version 0.1.0 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.
