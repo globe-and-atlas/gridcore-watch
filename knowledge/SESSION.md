@@ -6,14 +6,14 @@
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** none
 **Handoff-type:** new-project
-**Status:** Local implementation and independent verification complete. Store listing not created.
+**Status:** Local implementation committed and independently verified. Store listing not created.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
 - **Commands**: `npm ci`, `pebble clean`, `pebble build`, `python3 execution/verify_watchface.py` (all exit 0). Native installs and screenshots succeeded on both targets.
 - **Issues found**: Emery data stalled boot until a backed-up emulator wipe. The screenshot endpoint sometimes yielded transitional frames; complete frames were recaptured. Graphite's grid quantized teal until its RGB channels were equalized.
-- **Left undone**: Git commit, physical-watch check, store media and listing publication.
-- **Next**: Commit the verified local implementation. Treat store publication as a separate release step.
+- **Left undone**: Physical-watch check, store media and listing publication.
+- **Next**: Prepare a release listing and store media when publication is requested.
 
 ---
 ## Checkpoints
@@ -26,3 +26,4 @@
 
 - 2026-10-19 22:10 — commit: chore: initialize project from template
 - 2026-10-21 22:40 — commit: feat: implement Gridcore watchface for Pebble with customizable themes and motion effects | .tmp/.gitkeep,directives/build_watchface.md,knowledge/SESSION.md,task.md,watchface/package.json
+- 2026-10-22 10:05 — commit: feat: finish dual-platform Gridcore face with chamfered digits | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
