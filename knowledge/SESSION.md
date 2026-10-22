@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Repair the limited left-wrist echo range reported on physical Way Back 0.7.0.
+**Goal:** Expose None, Follow tilt, and Full clockwise orbit as separate Way Back motion choices.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Version 0.7.1 is Listed at https://apps.repebble.com/370092d6402c4a0bbc8fb01b. The public PBW and both five-image galleries are verified current at native resolution. Physical left-wrist feel remains for the wearer to confirm.
+**Status:** Complete for emulator and store release. Version 0.7.2 is Listed at https://apps.repebble.com/370092d6402c4a0bbc8fb01b with None, Follow tilt, and Full clockwise orbit. Physical left-wrist feel and battery use remain for the wearer to check.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,8 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 18:50: Released Way Back 0.7.2 with three Echo movement choices. Clay and watch persistence migrate legacy Motion Off to None and Motion On to Full clockwise orbit; the old AppMessage key remains a compatibility alias. Native Emery and Gabbro captures show pixel-identical None pairs and direction-dependent Tilt pairs; the bright foreground mask is fixed in Gabbro captures. A temporary Emery diagnostic build logged orbit steps 0–7, then logs were removed and both target production captures showed transient movement. Node settings tests, JS syntax, dual-target PBW verifier, diff check, and fresh independent review passed. The built, release, and publicly downloaded PBWs are byte-identical (717,953 bytes; SHA256 cb73dfbf2d0b37a1d76289b6ac2ac72930eb7bf1ffa2df93dde9c91a15ec6425). Developer dashboard and public listing both show 0.7.2, Time 2 and Round 2, and the updated motion description. Physical watch behavior remains unverified.
+- 2026-10-22 - Three motion choices: the user requested None, Tilt, and Full clockwise movement. Keep the existing 0.7.1 orbit as the default and migrate old On to Full orbit; old Off becomes None. Add a separate Follow tilt mode that tracks direction without starting an orbit. Preserve fixed foreground and dual-target support.
 - 2026-10-22 17:42: Full-orbit repair released as 0.7.1. The 3-axis trigger uses filtered X/Y/Z motion and returns to a new anchor after eight 180 ms steps. Native Emery and Gabbro fixtures captured five styles × eight orbit steps, with 0 foreground-mask changes within every style and visible echo changes between adjacent frames. A synthetic mostly-Z trace triggered visible production frames on both targets; subsequent held-pose frames settled. Motion Off stayed pixel-identical in Gabbro; reverse changed depth but kept the front fixed. The clean dual-target PBW passed its verifier, Node settings test, JS syntax, Python smoke test, and fresh independent review. Public PBW SHA256 `8f058a68ab9b2e486c2b8a94250ba0587c9e0657de85a8b743f17c88c9f2107e` matches the local release. New Time 2 and Round 2 GIFs and four stills per platform reached the public listing at native dimensions after a brief Time 2 cache delay. Dashboard gallery replacement required separate remove/save and upload/save operations. Gabbro's hung old SDK state was preserved in ignored `.tmp/gabbro-sdk-state-before-way-back-orbit` before a fresh platform boot. Physical left-wrist gesture feel remains for the wearer to check.
 - 2026-10-22 17:23: Physical left-wrist report contradicts the eight-angle fixture’s implied motion range. User chose a complete clockwise orbit on a deliberate tilt. Repair target: use all three accelerometer axes to trigger an eight-direction sweep; preserve the fixed foreground and existing resting direction.
 - 2026-10-22 - Store publication: uploaded the clean 0.7.0 dual-platform PBW, description, release notes, and five assets per target through the signed-in Pebble Developer Dashboard. The public listing is Listed at `https://apps.repebble.com/370092d6402c4a0bbc8fb01b`; it displays version 0.7.0, Time 2 and Round 2 support, and a GIF followed by four stills for both Emery and Gabbro. Fresh independent review confirmed both GIFs byte-identical, all eight stills pixel-identical, and the public PBW byte-identical (714211 bytes, SHA256 `8738a0f7e63cb45c933efa66cfa8394ece47283baf8b6f45500b008e0fb1f313`) to local artifacts. Both galleries loaded at native target dimensions. Physical-watch motion and battery remain unverified.
@@ -67,3 +69,4 @@
 - 2026-10-22 16:01 — commit: Make Way Back echoes orbit through store previews | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
 - 2026-10-22 16:50 — commit: Record Way Back Pebble store release | README.md,knowledge/INDEX.md,knowledge/SESSION.md,knowledge/procedural/build_and_check.md,task.md
 - 2026-10-22 17:43 — commit: Fix Way Back left-wrist tilt with full echo orbit | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
+- 2026-10-22 18:51 — commit: Add Way Back echo movement modes and release 0.7.2 | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl

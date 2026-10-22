@@ -19,6 +19,11 @@
 #define PERSIST_BACKGROUND 17
 #define PERSIST_ECHOES 18
 #define PERSIST_ECHO_REVERSE 19
+#define PERSIST_MOTION_MODE 20
+
+#define MOTION_NONE 0
+#define MOTION_TILT 1
+#define MOTION_ORBIT 2
 
 typedef struct { int x, y, w, h; } Rect;
 typedef struct {
@@ -30,7 +35,7 @@ static Layer *s_layer;
 static AppTimer *s_orbit_timer;
 static int s_look = 0;  // Color Slices
 static int s_date = 1;  // YYYY-MM-DD
-static int s_motion = 1;
+static int s_motion_mode = MOTION_ORBIT;
 static int s_bg = 0x0A1020;
 static int s_front = 0xF4F4DB;
 static int s_depth = 0x49B8D0;
@@ -538,7 +543,7 @@ static void orbit_tick(void *context) {
 }
 
 static void start_orbit(void) {
-  if (!s_motion || s_orbit_step>=0) return;
+  if (s_motion_mode!=MOTION_ORBIT || s_orbit_step>=0) return;
   time_t now=time(NULL);
   if (s_last_orbit && now-s_last_orbit<2) return;
   s_last_orbit=now;
@@ -589,17 +594,17 @@ static void accel_handler(AccelData *data,uint32_t count) {
   }
   int32_t moved=abs(s_filtered_x-s_anchor_x)+
                 abs(s_filtered_y-s_anchor_y)+abs(s_filtered_z-s_anchor_z);
-  if (moved>=360) start_orbit();
+  if (s_motion_mode==MOTION_ORBIT && moved>=360) start_orbit();
 }
 
 static void update_motion_subscription(void) {
-  if (s_motion && !s_accel_subscribed) {
+  if (s_motion_mode!=MOTION_NONE && !s_accel_subscribed) {
     s_filter_ready=false;
     accel_tap_service_subscribe(tap_handler);
     accel_data_service_subscribe(5,accel_handler);
     accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
     s_accel_subscribed=true;
-  } else if (!s_motion && s_accel_subscribed) {
+  } else if (s_motion_mode==MOTION_NONE && s_accel_subscribed) {
     accel_data_service_unsubscribe();
     accel_tap_service_unsubscribe();
     s_accel_subscribed=false;
@@ -609,6 +614,11 @@ static void update_motion_subscription(void) {
     s_angle_x=0;
     s_angle_y=0;
     s_filter_ready=false;
+  }
+  if (s_motion_mode!=MOTION_ORBIT && s_orbit_step>=0) {
+    if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
+    s_orbit_timer=NULL;
+    s_orbit_step=-1;
   }
 }
 
@@ -685,9 +695,24 @@ static void inbox(DictionaryIterator *iter,void *context) {
     s_day_start=day_start->value->int32;
     persist_write_int(PERSIST_DAY_START,s_day_start);
   }
-  Tuple *motion=dict_find(iter,MESSAGE_KEY_SETTING_MOTION);
-  if (motion && (motion->value->int32==0 || motion->value->int32==1)) {
-    s_motion=motion->value->int32; persist_write_int(PERSIST_MOTION,s_motion);
+  Tuple *motion_mode=dict_find(iter,MESSAGE_KEY_SETTING_MOTION_MODE);
+  Tuple *legacy_motion=dict_find(iter,MESSAGE_KEY_SETTING_MOTION);
+  if (motion_mode && motion_mode->value->int32>=MOTION_NONE &&
+      motion_mode->value->int32<=MOTION_ORBIT) {
+    int next_mode=motion_mode->value->int32;
+    if (next_mode==MOTION_ORBIT && s_motion_mode!=MOTION_ORBIT && s_filter_ready) {
+      s_anchor_x=s_filtered_x;
+      s_anchor_y=s_filtered_y;
+      s_anchor_z=s_filtered_z;
+      s_last_orbit=0;
+    }
+    s_motion_mode=next_mode;
+    persist_write_int(PERSIST_MOTION_MODE,s_motion_mode);
+    update_motion_subscription();
+  } else if (legacy_motion &&
+             (legacy_motion->value->int32==0 || legacy_motion->value->int32==1)) {
+    s_motion_mode=legacy_motion->value->int32?MOTION_ORBIT:MOTION_NONE;
+    persist_write_int(PERSIST_MOTION_MODE,s_motion_mode);
     update_motion_subscription();
   }
   read_color(iter,MESSAGE_KEY_SETTING_BG,&s_bg,PERSIST_BG);
@@ -715,7 +740,10 @@ static void unload(Window *window) {
 int main(void) {
   if (persist_exists(PERSIST_LOOK)) s_look=persist_read_int(PERSIST_LOOK);
   if (persist_exists(PERSIST_DATE)) s_date=persist_read_int(PERSIST_DATE);
-  if (persist_exists(PERSIST_MOTION)) s_motion=persist_read_int(PERSIST_MOTION);
+  if (persist_exists(PERSIST_MOTION_MODE))
+    s_motion_mode=persist_read_int(PERSIST_MOTION_MODE);
+  else if (persist_exists(PERSIST_MOTION))
+    s_motion_mode=persist_read_int(PERSIST_MOTION)?MOTION_ORBIT:MOTION_NONE;
   if (persist_exists(PERSIST_BG)) s_bg=persist_read_int(PERSIST_BG);
   if (persist_exists(PERSIST_FRONT)) s_front=persist_read_int(PERSIST_FRONT);
   if (persist_exists(PERSIST_DEPTH)) s_depth=persist_read_int(PERSIST_DEPTH);
@@ -734,7 +762,7 @@ int main(void) {
   if (persist_exists(PERSIST_ECHO_REVERSE)) s_echo_reverse=persist_read_int(PERSIST_ECHO_REVERSE);
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
-  s_motion=clamp(s_motion,0,1);
+  s_motion_mode=clamp(s_motion_mode,MOTION_NONE,MOTION_ORBIT);
   s_mode=clamp(s_mode,0,2);
   s_night_start=clamp(s_night_start,18,22);
   s_day_start=clamp(s_day_start,5,9);
@@ -747,7 +775,7 @@ int main(void) {
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;
   s_mode=GRIDCORE_MODE;
-  s_motion=0;
+  s_motion_mode=MOTION_NONE;
   s_angle_x=clamp(GRIDCORE_ANGLE_X,-3,3);
   s_angle_y=clamp(GRIDCORE_ANGLE_Y,-3,3);
   s_decoration=clamp(GRIDCORE_DECORATION,0,7);

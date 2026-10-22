@@ -70,3 +70,9 @@
 - Keep the foreground digits fixed. After the 1.44-second orbit, return the echoes to the filtered live tilt direction and set the gesture anchor to that position so a held wrist does not retrigger.
 - Keep Motion Off and reverse direction. The former unsubscribes motion and cancels an orbit; the latter negates the echo vector.
 - Drive listing frames through the fixture's actual orbit-step path so the GIF demonstrates the same eight positions as the watch.
+
+## 2026-10-22 — Three echo movement choices
+
+- Expose None, Follow tilt, and Full clockwise orbit as separate settings. None unsubscribes the accelerometer; Follow tilt continuously follows its filtered X/Y angle without starting an orbit; Full clockwise orbit retains the eight-step sweep and then follows the measured angle.
+- Keep Full clockwise orbit as the default. Migrate existing Motion Off to None and Motion On to Full clockwise orbit in both Clay settings and watch persistence.
+- Keep the old message key as a compatibility alias and append a new motion-mode key, preserving all existing AppMessage IDs.

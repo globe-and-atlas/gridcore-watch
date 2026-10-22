@@ -4,6 +4,7 @@ var DEFAULTS = {
   SETTING_LOOK: 0,
   SETTING_DATE: 1,
   SETTING_MOTION: 1,
+  SETTING_MOTION_MODE: 2,
   SETTING_BG: 0x0A1020,
   SETTING_FRONT: 0xF4F4DB,
   SETTING_DEPTH: 0x49B8D0,
@@ -27,13 +28,33 @@ function integer(value, min, max, fallback) {
   return isFinite(n) && Math.floor(n) === n && n >= min && n <= max ? n : fallback;
 }
 
+function motionMode(saved) {
+  if (Object.prototype.hasOwnProperty.call(saved, 'SETTING_MOTION_MODE')) {
+    return integer(saved.SETTING_MOTION_MODE, 0, 2, DEFAULTS.SETTING_MOTION_MODE);
+  }
+  return integer(saved.SETTING_MOTION, 0, 1, DEFAULTS.SETTING_MOTION) === 0 ? 0 : 2;
+}
+
+function migrateStoredSettings(raw) {
+  if (!raw) return raw;
+  var saved;
+  try { saved = JSON.parse(raw); } catch (error) { return raw; }
+  if (!saved || typeof saved !== 'object' ||
+      !Object.prototype.hasOwnProperty.call(saved, 'SETTING_MOTION') ||
+      Object.prototype.hasOwnProperty.call(saved, 'SETTING_MOTION_MODE')) return raw;
+  saved.SETTING_MOTION_MODE = motionMode(saved);
+  return JSON.stringify(saved);
+}
+
 function settingsMessage(raw) {
   var saved;
   try { saved = JSON.parse(raw) || {}; } catch (error) { saved = {}; }
+  var selectedMotion = motionMode(saved);
   return {
     SETTING_LOOK: integer(saved.SETTING_LOOK, 0, 5, DEFAULTS.SETTING_LOOK),
     SETTING_DATE: integer(saved.SETTING_DATE, 0, 3, DEFAULTS.SETTING_DATE),
-    SETTING_MOTION: integer(saved.SETTING_MOTION, 0, 1, DEFAULTS.SETTING_MOTION),
+    SETTING_MOTION: selectedMotion === 0 ? 0 : 1,
+    SETTING_MOTION_MODE: selectedMotion,
     SETTING_BG: integer(saved.SETTING_BG, 0, 0xFFFFFF, DEFAULTS.SETTING_BG),
     SETTING_FRONT: integer(saved.SETTING_FRONT, 0, 0xFFFFFF, DEFAULTS.SETTING_FRONT),
     SETTING_DEPTH: integer(saved.SETTING_DEPTH, 0, 0xFFFFFF, DEFAULTS.SETTING_DEPTH),
@@ -56,7 +77,7 @@ function settingsMessage(raw) {
 function configuration() {
   return [
     {type: 'heading', defaultValue: 'Way Back'},
-    {type: 'text', defaultValue: 'A deliberate wrist tilt or tap sends the echoes around the fixed time in one clockwise orbit. They settle at your current tilt. Turn motion off for a static face.'},
+    {type: 'text', defaultValue: 'Choose a static echo, one that follows your wrist angle, or a full clockwise orbit on a deliberate tilt or tap. The orbit settles at your current tilt. The time digits stay fixed.'},
     {type: 'select', messageKey: 'SETTING_LOOK', label: 'Look', defaultValue: '0', options: [
       {label: 'Color Slices', value: '0'},
       {label: 'Lift', value: '1'},
@@ -133,7 +154,11 @@ function configuration() {
       {label: '7 AM', value: '7'}, {label: '8 AM', value: '8'},
       {label: '9 AM', value: '9'}
     ]},
-    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Tilt-triggered orbit', defaultValue: true},
+    {type: 'select', messageKey: 'SETTING_MOTION_MODE', label: 'Echo movement', defaultValue: '2', options: [
+      {label: 'None', value: '0'},
+      {label: 'Follow tilt', value: '1'},
+      {label: 'Full clockwise orbit', value: '2'}
+    ]},
     {type: 'heading', defaultValue: 'Custom day colors'},
     {type: 'text', defaultValue: 'Choose Custom colors above to use these colors. Day and night picks are independent.'},
     {type: 'color', messageKey: 'SETTING_BG', label: 'Day background', defaultValue: '0A1020', sunlight: false, allowGray: true},
@@ -149,6 +174,11 @@ function configuration() {
   ];
 }
 
+var savedBeforeClay = localStorage.getItem('clay-settings');
+var migratedBeforeClay = migrateStoredSettings(savedBeforeClay);
+if (migratedBeforeClay !== savedBeforeClay) {
+  localStorage.setItem('clay-settings', migratedBeforeClay);
+}
 var clay = new Clay(configuration(), null, {autoHandleEvents: false});
 
 function send(raw) {
@@ -174,5 +204,6 @@ Pebble.addEventListener('webviewclosed', function (event) {
 });
 
 if (typeof module !== 'undefined') {
-  module.exports = {settingsMessage: settingsMessage, configuration: configuration};
+  module.exports = {settingsMessage: settingsMessage, configuration: configuration,
+    migrateStoredSettings: migrateStoredSettings};
 }

@@ -24,6 +24,21 @@ assert.equal(old.SETTING_FONT, 0);
 assert.equal(old.SETTING_BACKGROUND, 0);
 assert.equal(old.SETTING_ECHOES, 3);
 assert.equal(old.SETTING_ECHO_REVERSE, 0);
+assert.equal(old.SETTING_MOTION_MODE, 2);
+assert.equal(old.SETTING_MOTION, 1);
+
+const legacyOff = settings.settingsMessage(JSON.stringify({SETTING_MOTION: 0}));
+const legacyOn = settings.settingsMessage(JSON.stringify({SETTING_MOTION: 1}));
+assert.equal(legacyOff.SETTING_MOTION_MODE, 0);
+assert.equal(legacyOn.SETTING_MOTION_MODE, 2);
+assert.equal(JSON.parse(settings.migrateStoredSettings(JSON.stringify({SETTING_MOTION: 0}))).SETTING_MOTION_MODE, 0);
+assert.equal(JSON.parse(settings.migrateStoredSettings(JSON.stringify({SETTING_MOTION: 1}))).SETTING_MOTION_MODE, 2);
+
+const tilt = settings.settingsMessage(JSON.stringify({SETTING_MOTION: 0, SETTING_MOTION_MODE: 1}));
+assert.equal(tilt.SETTING_MOTION_MODE, 1);
+assert.equal(tilt.SETTING_MOTION, 1);
+assert.equal(settings.settingsMessage(JSON.stringify({SETTING_MOTION_MODE: 0})).SETTING_MOTION_MODE, 0);
+assert.equal(settings.settingsMessage(JSON.stringify({SETTING_MOTION_MODE: 2})).SETTING_MOTION_MODE, 2);
 
 const custom = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 1,
@@ -61,7 +76,8 @@ const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_FONT: 12,
   SETTING_BACKGROUND: 12,
   SETTING_ECHOES: 13,
-  SETTING_ECHO_REVERSE: 2
+  SETTING_ECHO_REVERSE: 2,
+  SETTING_MOTION_MODE: 3
 }));
 assert.equal(invalid.SETTING_MODE, 2);
 assert.equal(invalid.SETTING_NIGHT_START, 19);
@@ -72,11 +88,19 @@ assert.equal(invalid.SETTING_FONT, 0);
 assert.equal(invalid.SETTING_BACKGROUND, 0);
 assert.equal(invalid.SETTING_ECHOES, 3);
 assert.equal(invalid.SETTING_ECHO_REVERSE, 0);
+assert.equal(invalid.SETTING_MOTION_MODE, 2);
 
 const config = settings.configuration();
 assert.equal(config[0].defaultValue, 'Way Back');
 const keys = new Set(config.map(function (item) { return item.messageKey; }).filter(Boolean));
-for (const key of Object.keys(custom)) assert(keys.has(key), `missing Clay control: ${key}`);
+for (const key of Object.keys(custom)) {
+  if (key !== 'SETTING_MOTION') assert(keys.has(key), `missing Clay control: ${key}`);
+}
+assert(!keys.has('SETTING_MOTION'));
+const motionControl = config.find((item) => item.messageKey === 'SETTING_MOTION_MODE');
+assert.equal(motionControl.type, 'select');
+assert.equal(motionControl.defaultValue, '2');
+assert.deepEqual(motionControl.options.map((option) => option.value), ['0', '1', '2']);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_DECORATION').options.length, 8);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_FONT').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_BACKGROUND').options.length, 12);

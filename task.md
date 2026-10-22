@@ -4,6 +4,27 @@ timestamp: "2026-10-19T22:11:00-05:00"
 ---
 # Way Back watchface
 
+## Three motion choices — 2026-10-22
+
+- [x] Settings offer None.
+- [x] Settings offer Follow tilt.
+- [x] Settings offer Full clockwise orbit.
+- [x] None leaves the echo static during accelerometer input.
+- [x] Follow tilt changes echo direction with wrist angle.
+- [x] Follow tilt does not start a full orbit.
+- [x] Full clockwise orbit visits eight directions after a deliberate tilt.
+- [x] Full clockwise orbit settles at the measured tilt direction.
+- [x] Foreground digits remain fixed in each motion choice.
+- [x] A legacy Motion Off setting becomes None.
+- [x] A legacy Motion On setting becomes Full clockwise orbit.
+- [x] The selected motion choice persists after watch restart.
+- [x] Emery native captures distinguish the three choices.
+- [x] Gabbro native captures distinguish the three choices.
+- [x] The release PBW contains Emery.
+- [x] The release PBW contains Gabbro.
+- [x] A fresh verifier reviews the release.
+- [x] RePebble lists the new release version.
+
 ## Left-wrist full orbit repair — 2026-10-22
 
 - [x] A deliberate tilt changing Z with little X/Y change triggers a full clockwise orbit.
