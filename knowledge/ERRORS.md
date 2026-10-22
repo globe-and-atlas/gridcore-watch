@@ -35,3 +35,17 @@ Record deterministic errors, root causes, and fixes here.
 - Cause: both segmented and text layout subtracted half of a direction-dependent echo base from the foreground origin. Reversing the trail therefore also reversed the foreground offset.
 - Fix: center the foreground independently of echo depth and direction. Keep direction multiplication inside the echo offset alone.
 - Graduated-to: `execution/capture_store_media.py` rejects paired frames when the foreground numeral pixel mask changes.
+
+# 2026-10-22 — Stale watchface passed store-frame capture
+
+- Symptom: both capture loops completed after successful Way Back installs, but the images still showed Clockfish from the shared emulator.
+- Cause: a previous watchface remained active or hung even though `pebble install` returned success.
+- Fix: inspect a screenshot before capture. Gracefully stop QEMU, start the target emulator, allow it to boot, install again, and confirm Way Back is visible. For Gabbro, preserve the old SDK state under ignored `.tmp/` and start with a fresh platform state when the old app remained unresponsive.
+- Graduated-to: the media script checks for a visible change between its first two orbit frames and fails early if none appears.
+
+# 2026-10-22 — Dashboard could not replace gallery in one save
+
+- Symptom: saving a listing edit that both removed old screenshots and uploaded replacements returned an internal error. The description saved, but the public gallery retained old media.
+- Cause: the dashboard's combined mutation failed; the exact server cause is unknown.
+- Fix: save screenshot removal separately, reopen the editor, upload replacement files, then save again. Confirm the public gallery and compare the saved GIF with the local file.
+- Graduated-to: use separate saves for gallery removal and upload in the release procedure.

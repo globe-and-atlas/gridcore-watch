@@ -61,5 +61,12 @@
 
 ## 2026-10-22 — Clockwise echo orbit
 
-- Blend the resting diagonal echo toward the measured two-axis wrist angle. A full tilt reaches the eight surrounding directions; the reverse setting negates that displacement. The foreground remains centered independently of the trail.
+- Historical choice: blend the resting diagonal echo toward the measured two-axis wrist angle. This can leave a left-wrist gesture limited to a small arc. The full-orbit decision below supersedes the claim that a physical tilt visits all directions.
 - Replace the paired-direction store animation with eight clockwise native angles per style. Cycle through five styles, including a graphite style with decoration set to None. Require identical foreground masks and visible echo changes for every adjacent frame.
+
+## 2026-10-22 — Full orbit on deliberate tilt
+
+- A deliberate change on any accelerometer axis, including Z, starts one eight-step clockwise echo orbit. The user selected a complete sweep for each trigger after a physical left-wrist test exposed the limited angle range.
+- Keep the foreground digits fixed. After the 1.44-second orbit, return the echoes to the filtered live tilt direction and set the gesture anchor to that position so a held wrist does not retrigger.
+- Keep Motion Off and reverse direction. The former unsubscribes motion and cancels an orbit; the latter negates the echo vector.
+- Drive listing frames through the fixture's actual orbit-step path so the GIF demonstrates the same eight positions as the watch.

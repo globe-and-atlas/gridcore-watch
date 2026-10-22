@@ -56,7 +56,7 @@ function settingsMessage(raw) {
 function configuration() {
   return [
     {type: 'heading', defaultValue: 'Way Back'},
-    {type: 'text', defaultValue: 'Wrist tilt shifts the depth and its three-color shading. Turn Live tilt parallax off for a static face; a tap briefly reveals the structure when it is on.'},
+    {type: 'text', defaultValue: 'A deliberate wrist tilt or tap sends the echoes around the fixed time in one clockwise orbit. They settle at your current tilt. Turn motion off for a static face.'},
     {type: 'select', messageKey: 'SETTING_LOOK', label: 'Look', defaultValue: '0', options: [
       {label: 'Color Slices', value: '0'},
       {label: 'Lift', value: '1'},
@@ -133,7 +133,7 @@ function configuration() {
       {label: '7 AM', value: '7'}, {label: '8 AM', value: '8'},
       {label: '9 AM', value: '9'}
     ]},
-    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Live tilt parallax', defaultValue: true},
+    {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Tilt-triggered orbit', defaultValue: true},
     {type: 'heading', defaultValue: 'Custom day colors'},
     {type: 'text', defaultValue: 'Choose Custom colors above to use these colors. Day and night picks are independent.'},
     {type: 'color', messageKey: 'SETTING_BG', label: 'Day background', defaultValue: '0A1020', sunlight: false, allowGray: true},

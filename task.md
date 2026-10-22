@@ -4,6 +4,20 @@ timestamp: "2026-10-19T22:11:00-05:00"
 ---
 # Way Back watchface
 
+## Left-wrist full orbit repair — 2026-10-22
+
+- [x] A deliberate tilt changing Z with little X/Y change triggers a full clockwise orbit.
+- [x] One orbit visits eight echo directions.
+- [x] The foreground numerals remain fixed during the orbit.
+- [x] The face returns to its live resting direction after the orbit.
+- [x] Motion Off prevents the orbit.
+- [x] A held wrist pose does not continuously restart the orbit.
+- [x] The reverse setting still reverses echo depth.
+- [x] Native Emery captures show the orbit.
+- [x] Native Gabbro captures show the orbit.
+- [x] The new PBW contains both targets.
+- [x] A fresh verifier reviews the release.
+
 ## Clockwise echo orbit — 2026-10-22
 
 - [x] Wrist tilt can place the echo above the digits.

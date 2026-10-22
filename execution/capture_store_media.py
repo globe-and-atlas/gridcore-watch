@@ -95,7 +95,8 @@ def capture(platform: str, style: str | None = None) -> None:
             continue
         for index, (angle_x, angle_y) in enumerate(ANGLES):
             selected = {**settings, "SETTING_ECHO_REVERSE": 0, "SETTING_DATE": 1,
-                        "SETTING_MODE": 0, 11000: angle_x, 11001: angle_y}
+                        "SETTING_MODE": 0, 11000: angle_x, 11001: angle_y,
+                        11002: index}
             pairs = [f"{message_keys[key] if isinstance(key, str) else key}={value}"
                      for key, value in selected.items()]
             run_pebble("send-app-message", "--emulator", platform, "--int", *pairs)
@@ -107,6 +108,15 @@ def capture(platform: str, style: str | None = None) -> None:
                     break
             else:
                 raise RuntimeError(f"No complete native frame after 8 tries: {output}")
+            if index == 1:
+                previous = CAPTURES / f"{platform}-{name}-orbit-00.png"
+                with Image.open(previous) as first, Image.open(output) as second:
+                    changed = ImageChops.difference(first.convert("RGB"), second.convert("RGB"))
+                    changed_pixels = changed.width * changed.height - changed.convert("L").histogram()[0]
+                    if changed_pixels < 200:
+                        raise RuntimeError(
+                            f"Orbit capture did not change on {platform}: check that Way Back is active"
+                        )
             print(f"Captured {output.name} (attempt {attempt + 1})")
 
 

@@ -27,7 +27,7 @@ typedef struct {
 
 static Window *s_window;
 static Layer *s_layer;
-static AppTimer *s_reveal_timer;
+static AppTimer *s_orbit_timer;
 static int s_look = 0;  // Color Slices
 static int s_date = 1;  // YYYY-MM-DD
 static int s_motion = 1;
@@ -48,16 +48,21 @@ static int s_background = 0;  // Blueprint grid
 static int s_echoes = 3;
 static int s_echo_reverse = 0;
 static GFont s_custom_fonts[4];
-static int s_phase = 4;
-static int s_tilt = 0;
+static int s_orbit_step = -1;
 static int s_angle_x;
 static int s_angle_y;
 static int32_t s_filtered_x;
 static int32_t s_filtered_y;
+static int32_t s_filtered_z;
+static int32_t s_anchor_x;
+static int32_t s_anchor_y;
+static int32_t s_anchor_z;
 static bool s_filter_ready;
-static bool s_raise_armed;
 static bool s_accel_subscribed;
-static time_t s_last_reveal;
+static time_t s_last_orbit;
+static const int8_t ORBIT_VECTORS[8][2]={
+  {0,-3},{2,-2},{3,0},{2,2},{0,3},{-2,2},{-3,0},{-2,-2}
+};
 
 static int clamp(int value, int lo, int hi) {
   return value < lo ? lo : (value > hi ? hi : value);
@@ -157,18 +162,29 @@ static int echo_reach(void) {
   return s_echoes<=3?s_echoes*3:9+(s_echoes-3)*4/3;
 }
 
+static int render_angle_x(void) {
+  return s_orbit_step>=0?ORBIT_VECTORS[s_orbit_step][0]:s_angle_x;
+}
+
+static int render_angle_y(void) {
+  return s_orbit_step>=0?ORBIT_VECTORS[s_orbit_step][1]:s_angle_y;
+}
+
 static GPoint echo_offset(void) {
   int direction=s_echo_reverse?-1:1;
   int reach=echo_reach();
+  if (s_orbit_step>=0) {
+    return GPoint(direction*reach*ORBIT_VECTORS[s_orbit_step][0]/3,
+                  direction*reach*ORBIT_VECTORS[s_orbit_step][1]/3);
+  }
   int base=s_look==2?-reach:reach;
   int ax=s_angle_x<0?-s_angle_x:s_angle_x;
   int ay=s_angle_y<0?-s_angle_y:s_angle_y;
   int strength=ax>ay?ax:ay;
-  // At rest retain the familiar diagonal. A full wrist tilt points the
-  // depth around all eight screen directions; the foreground never moves.
-  int dx=(base*(3-strength)+reach*s_angle_x)*s_phase/12;
-  int dy=(-base*(3-strength)+reach*s_angle_y)*s_phase/12;
-  return GPoint(direction*(dx+s_tilt),direction*dy);
+  // Rest at the live tilt direction after an eight-position orbit.
+  int dx=(base*(3-strength)+reach*s_angle_x)/3;
+  int dy=(-base*(3-strength)+reach*s_angle_y)/3;
+  return GPoint(direction*dx,direction*dy);
 }
 
 static GColor echo_shade(Palette p,int index) {
@@ -330,17 +346,19 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
   Rect rear={r.x+dx,r.y+dy,r.w,r.h};
   GColor top_shades[3]={p.accent,p.middle,p.depth};
   GColor side_shades[3]={p.depth,p.middle,p.accent};
-  if (s_angle_y*(s_echo_reverse?-1:1)>0) {
+  int angle_x=render_angle_x();
+  int angle_y=render_angle_y();
+  if (angle_y*(s_echo_reverse?-1:1)>0) {
     top_shades[0]=p.depth;
     top_shades[2]=p.accent;
   }
-  if (s_angle_x*(s_echo_reverse?-1:1)<0) {
+  if (angle_x*(s_echo_reverse?-1:1)<0) {
     side_shades[0]=p.accent;
     side_shades[2]=p.depth;
   }
   if (s_look==0) {
-    int ax=s_angle_x<0?-s_angle_x:s_angle_x;
-    int ay=s_angle_y<0?-s_angle_y:s_angle_y;
+    int ax=angle_x<0?-angle_x:angle_x;
+    int ay=angle_y<0?-angle_y:angle_y;
     GColor *slice_shades=ay>ax?top_shades:side_shades;
     for (int i=s_echoes;i>=1;i--) {
       Rect slice={r.x+dx*i/s_echoes,r.y+dy*i/s_echoes,r.w,r.h};
@@ -505,58 +523,62 @@ static void redraw(Layer *layer,GContext *ctx) {
   draw_date(ctx,bounds,local,p);
 }
 
-static void reveal_tick(void *context) {
+static void orbit_tick(void *context) {
   (void)context;
-  s_reveal_timer=NULL;
-  if (s_phase<4) {
-    s_phase++;
-    if (s_phase==4) s_tilt=0;
-    layer_mark_dirty(s_layer);
-    if (s_phase<4) s_reveal_timer=app_timer_register(180,reveal_tick,NULL);
+  s_orbit_timer=NULL;
+  s_orbit_step++;
+  if (s_orbit_step>=8) {
+    s_orbit_step=-1;
+    s_anchor_x=s_filtered_x;
+    s_anchor_y=s_filtered_y;
+    s_anchor_z=s_filtered_z;
   }
+  layer_mark_dirty(s_layer);
+  if (s_orbit_step>=0) s_orbit_timer=app_timer_register(180,orbit_tick,NULL);
 }
 
-static void start_reveal(int tilt) {
-  if (!s_motion) return;
+static void start_orbit(void) {
+  if (!s_motion || s_orbit_step>=0) return;
   time_t now=time(NULL);
-  if (s_last_reveal && now-s_last_reveal<5) return;
-  s_last_reveal=now;
-  if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
-  s_tilt=clamp(tilt,-2,2);
-  s_phase=0;
+  if (s_last_orbit && now-s_last_orbit<2) return;
+  s_last_orbit=now;
+  s_orbit_step=0;
   layer_mark_dirty(s_layer);
-  s_reveal_timer=app_timer_register(180,reveal_tick,NULL);
+  s_orbit_timer=app_timer_register(180,orbit_tick,NULL);
 }
 
 static void tap_handler(AccelAxisType axis,int32_t direction) {
   (void)axis;
-  start_reveal(direction>0?1:-1);
+  (void)direction;
+  start_orbit();
 }
 
 static void accel_handler(AccelData *data,uint32_t count) {
-  int32_t sum_x=0, sum_y=0;
+  int32_t sum_x=0, sum_y=0, sum_z=0;
   uint32_t samples=0;
   for (uint32_t i=0;i<count;i++) {
     if (data[i].did_vibrate) continue;
     sum_x+=data[i].x;
     sum_y+=data[i].y;
+    sum_z+=data[i].z;
     samples++;
-    if (data[i].z>=-250) s_raise_armed=true;
-    else if (data[i].z<=-600 && s_raise_armed) {
-      s_raise_armed=false;
-      start_reveal(data[i].x/350);
-    }
   }
   if (!samples) return;
   int32_t avg_x=sum_x/(int32_t)samples;
   int32_t avg_y=sum_y/(int32_t)samples;
+  int32_t avg_z=sum_z/(int32_t)samples;
   if (!s_filter_ready) {
     s_filtered_x=avg_x;
     s_filtered_y=avg_y;
+    s_filtered_z=avg_z;
+    s_anchor_x=avg_x;
+    s_anchor_y=avg_y;
+    s_anchor_z=avg_z;
     s_filter_ready=true;
   } else {
-    s_filtered_x=(3*s_filtered_x+avg_x)/4;
-    s_filtered_y=(3*s_filtered_y+avg_y)/4;
+    s_filtered_x=(s_filtered_x+avg_x)/2;
+    s_filtered_y=(s_filtered_y+avg_y)/2;
+    s_filtered_z=(s_filtered_z+avg_z)/2;
   }
   int new_x=angle_step(s_filtered_x,s_angle_x);
   int new_y=angle_step(-s_filtered_y,s_angle_y);
@@ -565,11 +587,13 @@ static void accel_handler(AccelData *data,uint32_t count) {
     s_angle_y=new_y;
     layer_mark_dirty(s_layer);
   }
+  int32_t moved=abs(s_filtered_x-s_anchor_x)+
+                abs(s_filtered_y-s_anchor_y)+abs(s_filtered_z-s_anchor_z);
+  if (moved>=360) start_orbit();
 }
 
 static void update_motion_subscription(void) {
   if (s_motion && !s_accel_subscribed) {
-    s_raise_armed=false;
     s_filter_ready=false;
     accel_tap_service_subscribe(tap_handler);
     accel_data_service_subscribe(5,accel_handler);
@@ -579,10 +603,9 @@ static void update_motion_subscription(void) {
     accel_data_service_unsubscribe();
     accel_tap_service_unsubscribe();
     s_accel_subscribed=false;
-    if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
-    s_reveal_timer=NULL;
-    s_phase=4;
-    s_tilt=0;
+    if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
+    s_orbit_timer=NULL;
+    s_orbit_step=-1;
     s_angle_x=0;
     s_angle_y=0;
     s_filter_ready=false;
@@ -611,6 +634,9 @@ static void inbox(DictionaryIterator *iter,void *context) {
     s_angle_x=angle_x->value->int32;
   if (angle_y && angle_y->value->int32>=-3 && angle_y->value->int32<=3)
     s_angle_y=angle_y->value->int32;
+  Tuple *orbit_step=dict_find(iter,11002);
+  if (orbit_step && orbit_step->value->int32>=-1 && orbit_step->value->int32<=7)
+    s_orbit_step=orbit_step->value->int32;
 #endif
   Tuple *look=dict_find(iter,MESSAGE_KEY_SETTING_LOOK);
   if (look && look->value->int32>=0 && look->value->int32<=5) {
@@ -741,7 +767,7 @@ int main(void) {
   app_message_register_inbox_received(inbox);
   app_message_open(256,64);
   app_event_loop();
-  if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
+  if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
   app_message_deregister_callbacks();
   if (s_accel_subscribed) {
     accel_data_service_unsubscribe();
