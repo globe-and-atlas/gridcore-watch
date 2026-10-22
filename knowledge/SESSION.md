@@ -42,3 +42,4 @@
 - 2026-10-22 10:05 — commit: feat: finish dual-platform Gridcore face with chamfered digits | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
 - 2026-10-22 10:22 — commit: feat: add live tilt parallax to Gridcore | README.md,knowledge/DECISIONS.md,knowledge/REFLECTIONS.jsonl,knowledge/SESSION.md,knowledge/procedural/build_and_check.md
 - 2026-10-22 14:08 — commit: feat: add day and night color settings to Gridcore | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/REFLECTIONS.jsonl
+- 2026-10-22 14:33 — commit: feat: add Gridcore numeral and decoration options | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
