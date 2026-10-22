@@ -2,7 +2,7 @@
 
 ## Identity
 
-- Name: Gridcore
+- Name: Way Back (repository directory: `gridcore-watch`)
 - Platform: Pebble Time 2 (Emery) and Pebble Round 2 (Gabbro)
 - Runtime: Pebble SDK 4.33.1, C watchface, Clay phone settings
 

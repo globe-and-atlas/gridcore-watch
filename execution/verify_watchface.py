@@ -1,4 +1,4 @@
-"""Check the release bundle against Gridcore's two-watch package contract."""
+"""Check the release bundle against Way Back's two-watch package contract."""
 
 from __future__ import annotations
 
@@ -36,6 +36,8 @@ MESSAGE_KEYS = (
 def verify() -> None:
     package = json.loads(PACKAGE.read_text(encoding="utf-8"))
     expected = package["pebble"]
+    assert expected["displayName"] == "Way Back"
+    assert expected["uuid"] == "2062ace2-4528-4975-95b6-fc2cbf11de0d"
     assert tuple(expected["targetPlatforms"]) == TARGETS
     assert expected["watchapp"]["watchface"] is True
     assert tuple(expected["messageKeys"]) == MESSAGE_KEYS
@@ -44,6 +46,10 @@ def verify() -> None:
     with ZipFile(BUNDLE) as archive:
         names = set(archive.namelist())
         appinfo = json.loads(archive.read("appinfo.json"))
+        assert appinfo["name"] == "way-back-watch"
+        assert appinfo["shortName"] == "Way Back"
+        assert appinfo["longName"] == "Way Back"
+        assert appinfo["versionLabel"] == package["version"]
         assert appinfo["uuid"] == expected["uuid"]
         assert tuple(appinfo["targetPlatforms"]) == TARGETS
         assert set(appinfo["messageKeys"]) == set(MESSAGE_KEYS)
@@ -57,7 +63,7 @@ def verify() -> None:
             assert len(archive.read(binary)) > 1024, f"Empty {binary}"
             json.loads(archive.read(manifest))
 
-    print(f"PASS: Gridcore {appinfo['versionLabel']} bundle for Emery and Gabbro")
+    print(f"PASS: Way Back {appinfo['versionLabel']} bundle for Emery and Gabbro")
 
 
 if __name__ == "__main__":

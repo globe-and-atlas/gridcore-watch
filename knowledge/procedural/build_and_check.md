@@ -2,7 +2,7 @@
 generated_by: "OpenAI Codex (GPT-6.1-sol)"
 timestamp: "2026-10-22T10:01:05-05:00"
 ---
-# Build and check Gridcore
+# Build and check Way Back
 
 1. Run `npm ci`, `pebble clean`, and `pebble build` from `watchface/`.
 2. Run `python3 execution/verify_watchface.py` from the project root. Inspect the PBW for both platform binaries.

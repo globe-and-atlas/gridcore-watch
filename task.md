@@ -2,7 +2,7 @@
 generated_by: "OpenAI Codex (GPT-6.1-sol)"
 timestamp: "2026-10-19T22:11:00-05:00"
 ---
-# Gridcore watchface
+# Way Back watchface
 
 ## Contract
 - Target directive: `directives/build_watchface.md`.
@@ -176,7 +176,7 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] The release PBW contains the echo setting on both targets.
 - [x] A fresh verifier reviews the final echo captures.
 
-## Before Gridcore store publication — 2026-10-22
+## Before Way Back store publication — 2026-10-22
 
 - [ ] Check 12-echo redraw and wrist motion on a physical Pebble Time 2.
 - [ ] Check 12-echo redraw and wrist motion on a physical Pebble Round 2.
@@ -185,8 +185,19 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [ ] Create a Gabbro GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
 - [ ] Keep each GIF under the store's 4.4 MB image limit.
 - [ ] Choose no more than five screenshots per target.
-- [ ] Prepare the Gridcore listing description.
+- [ ] Prepare the Way Back listing description.
 - [ ] Upload the production PBW to the Pebble Developer Dashboard.
 - [ ] Confirm the saved Emery media in the dashboard.
 - [ ] Confirm the saved Gabbro media in the dashboard.
-- [ ] Confirm the public listing serves version 0.5.0 to both targets.
+- [ ] Confirm the public listing serves version 0.5.1 to both targets.
+
+## Way Back product rename — 2026-10-22
+
+- [x] The PBW display name is Way Back.
+- [x] The PBW UUID remains 2062ace2-4528-4975-95b6-fc2cbf11de0d.
+- [x] The phone settings title is Way Back.
+- [x] The project README names the watchface Way Back.
+- [x] The release checklist names Way Back.
+- [x] The package version identifies the renamed build.
+- [x] The production PBW contains Emery and Gabbro binaries.
+- [x] A fresh verifier reviews the final package identity.

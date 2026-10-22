@@ -1,11 +1,11 @@
 {
-  "name": "gridcore-watch",
+  "name": "way-back-watch",
   "author": "Daniel Bally",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": true,
   "keywords": ["pebble-app"],
   "pebble": {
-    "displayName": "Gridcore",
+    "displayName": "Way Back",
     "uuid": "2062ace2-4528-4975-95b6-fc2cbf11de0d",
     "sdkVersion": "3",
     "enableMultiJS": true,

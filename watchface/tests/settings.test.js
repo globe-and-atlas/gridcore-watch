@@ -69,10 +69,11 @@ assert.equal(invalid.SETTING_BACKGROUND, 0);
 assert.equal(invalid.SETTING_ECHOES, 3);
 
 const config = settings.configuration();
+assert.equal(config[0].defaultValue, 'Way Back');
 const keys = new Set(config.map(function (item) { return item.messageKey; }).filter(Boolean));
 for (const key of Object.keys(custom)) assert(keys.has(key), `missing Clay control: ${key}`);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_DECORATION').options.length, 8);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_FONT').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_BACKGROUND').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHOES').options.length, 12);
-console.log('PASS: Gridcore settings defaults, migration, validation, and controls');
+console.log('PASS: Way Back settings defaults, migration, validation, and controls');

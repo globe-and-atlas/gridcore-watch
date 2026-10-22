@@ -45,3 +45,7 @@
 
 - Center the visible clock, including its nominal extrusion, instead of only centering equal-width digit cells. Account for the narrow `1` at either end of the time. Keep tilt motion separate from this fixed layout offset so the foreground never shifts with the wrist.
 - Offer 1–12 echoes, defaulting to three for existing installations. Grow the maximum reach gradually to 21 pixels at twelve echoes, and use progressively quieter colors for distant layers above three echoes. Preserve a fixed foreground for both segmented and text numeral styles.
+
+## 2026-10-22 — Product name
+
+- Name the watchface Way Back. Keep its Pebble UUID so existing local installs receive an update under the new name. Retain the `gridcore-watch` repository path and internal font resource identifiers to avoid renaming build fixtures or altering the licensed font subset during a product copy change.

@@ -53,7 +53,7 @@ function settingsMessage(raw) {
 
 function configuration() {
   return [
-    {type: 'heading', defaultValue: 'Gridcore'},
+    {type: 'heading', defaultValue: 'Way Back'},
     {type: 'text', defaultValue: 'Wrist tilt shifts the depth and its three-color shading. Turn Live tilt parallax off for a static face; a tap briefly reveals the structure when it is on.'},
     {type: 'select', messageKey: 'SETTING_LOOK', label: 'Look', defaultValue: '0', options: [
       {label: 'Color Slices', value: '0'},
@@ -105,7 +105,7 @@ function configuration() {
       {label: 'Cormorant Garamond', value: '8'},
       {label: 'Bodoni Moda', value: '9'},
       {label: 'Space Grotesk', value: '10'},
-      {label: 'Gridcore Book', value: '11'}
+      {label: 'Book Serif', value: '11'}
     ]},
     {type: 'select', messageKey: 'SETTING_ECHOES', label: 'Number echoes', defaultValue: '3', options: [
       {label: '1', value: '1'}, {label: '2', value: '2'},
@@ -150,7 +150,7 @@ var clay = new Clay(configuration(), null, {autoHandleEvents: false});
 
 function send(raw) {
   Pebble.sendAppMessage(settingsMessage(raw), null, function (error) {
-    console.log('Gridcore settings send failed: ' + JSON.stringify(error));
+    console.log('Way Back settings send failed: ' + JSON.stringify(error));
   });
 }
 
@@ -166,7 +166,7 @@ Pebble.addEventListener('showConfiguration', function () {
 Pebble.addEventListener('webviewclosed', function (event) {
   if (!event || !event.response || event.response === 'CANCELLED') return;
   try { clay.getSettings(event.response); }
-  catch (error) { console.log('Gridcore settings rejected: ' + error); return; }
+  catch (error) { console.log('Way Back settings rejected: ' + error); return; }
   send(localStorage.getItem('clay-settings'));
 });
 

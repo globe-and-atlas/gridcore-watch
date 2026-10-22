@@ -2,7 +2,7 @@
 generated_by: "OpenAI Codex (GPT-6.1-sol)"
 timestamp: "2026-10-19T22:12:00-05:00"
 ---
-# Build Gridcore
+# Build Way Back
 
 Purpose: make the dimensional numeral concept a readable native Pebble watchface for Time 2 and Round 2.
 

@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Center the visible clock and add selectable 1–12 numeral echoes before preparing updated look renders.
+**Goal:** Rename the watchface to Way Back across the install package, settings, and release materials.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Local 0.5.0 centers the visible clock and offers 1–12 saved echoes. Native Emery/Gabbro look and echo captures, production PBW, settings tests, persistence, and independent review pass. Store listing not created; no physical-watch test.
+**Status:** Way Back 0.5.1 is built and independently verified for Emery and Gabbro. Store listing not created; no physical-watch test.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,7 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Renamed product metadata and Clay settings title to Way Back while retaining UUID `2062ace2-4528-4975-95b6-fc2cbf11de0d`. Clean production v0.5.1 build contains Emery and Gabbro. Bundle verifier, settings test, JS syntax, Python smoke test, and diff check pass. Fresh independent review confirmed package identity and release copy. Publishing and physical-watch validation remain open.
 - 2026-10-22 - Centering and echoes final: default 13:48 and 23:48 full-ink centers measured at x=100.5 on Emery and x=130.5 on Gabbro. Echo 1, 3, 12 and Bodoni 12 captured natively; 12-layer palette subdued after first crowded iteration. The 12-echo setting survived a production PBW reinstall. A transitional media capture and invalid persisted-value fallback were corrected during fresh review. Final 0.5.0 dual-target PBW (713301 bytes), settings test, smoke test, JS syntax, diff check, and independent recheck passed. Physical-watch motion/battery and store media GIF remain open.
 - 2026-10-22 - Centering scope: use visible numeral insets and nominal echo depth to center the full time group; native 13:48 Emery measurement improved from center x=110.5 to x=100.5 including depth. New 1–12 echo setting is being checked at extremes on both targets.
 - 2026-10-22 - Segmented numeral balance: extended uncapped verticals, centered 1, and shortened cap bars. Native 13:48 captures on Emery and Gabbro include time and date; first after captures were transitional and replaced after emulator settle. Production 0.4.1 PBW verifier, Node settings test, Python smoke test, and fresh independent visual review passed.
