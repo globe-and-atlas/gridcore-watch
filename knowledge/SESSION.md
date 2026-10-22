@@ -59,3 +59,4 @@
 - 2026-10-22 15:09 — commit: Center Gridcore time and add selectable echo depth | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
 - 2026-10-22 15:15 — commit: Rename Gridcore watchface to Way Back | README.md,directives/build_watchface.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md
 - 2026-10-22 15:26 — commit: Add reversible echoes and Way Back store media | README.md,execution/capture_store_media.py,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md
+- 2026-10-22 15:43 — commit: Keep Way Back foreground fixed during echo reversal | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/FAILURES/2026-10-22_foreground_jump/context.md
