@@ -23,6 +23,7 @@ assert.equal(old.SETTING_DECORATION, 0);
 assert.equal(old.SETTING_FONT, 0);
 assert.equal(old.SETTING_BACKGROUND, 0);
 assert.equal(old.SETTING_ECHOES, 3);
+assert.equal(old.SETTING_ECHO_REVERSE, 0);
 
 const custom = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 1,
@@ -35,7 +36,8 @@ const custom = settings.settingsMessage(JSON.stringify({
   SETTING_DECORATION: 5,
   SETTING_FONT: 11,
   SETTING_BACKGROUND: 10,
-  SETTING_ECHOES: 12
+  SETTING_ECHOES: 12,
+  SETTING_ECHO_REVERSE: 1
 }));
 assert.equal(custom.SETTING_MODE, 1);
 assert.equal(custom.SETTING_NIGHT_START, 22);
@@ -48,6 +50,7 @@ assert.equal(custom.SETTING_DECORATION, 5);
 assert.equal(custom.SETTING_FONT, 11);
 assert.equal(custom.SETTING_BACKGROUND, 10);
 assert.equal(custom.SETTING_ECHOES, 12);
+assert.equal(custom.SETTING_ECHO_REVERSE, 1);
 
 const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 3,
@@ -57,7 +60,8 @@ const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_DECORATION: 8,
   SETTING_FONT: 12,
   SETTING_BACKGROUND: 12,
-  SETTING_ECHOES: 13
+  SETTING_ECHOES: 13,
+  SETTING_ECHO_REVERSE: 2
 }));
 assert.equal(invalid.SETTING_MODE, 2);
 assert.equal(invalid.SETTING_NIGHT_START, 19);
@@ -67,6 +71,7 @@ assert.equal(invalid.SETTING_DECORATION, 0);
 assert.equal(invalid.SETTING_FONT, 0);
 assert.equal(invalid.SETTING_BACKGROUND, 0);
 assert.equal(invalid.SETTING_ECHOES, 3);
+assert.equal(invalid.SETTING_ECHO_REVERSE, 0);
 
 const config = settings.configuration();
 assert.equal(config[0].defaultValue, 'Way Back');
@@ -76,4 +81,5 @@ assert.equal(config.find((item) => item.messageKey === 'SETTING_DECORATION').opt
 assert.equal(config.find((item) => item.messageKey === 'SETTING_FONT').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_BACKGROUND').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHOES').options.length, 12);
+assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHO_REVERSE').defaultValue, false);
 console.log('PASS: Way Back settings defaults, migration, validation, and controls');

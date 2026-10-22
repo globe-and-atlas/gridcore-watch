@@ -18,6 +18,7 @@
 #define PERSIST_FONT 16
 #define PERSIST_BACKGROUND 17
 #define PERSIST_ECHOES 18
+#define PERSIST_ECHO_REVERSE 19
 
 typedef struct { int x, y, w, h; } Rect;
 typedef struct {
@@ -45,6 +46,7 @@ static int s_decoration = 0;
 static int s_font = 0;
 static int s_background = 0;  // Blueprint grid
 static int s_echoes = 3;
+static int s_echo_reverse = 0;
 static GFont s_custom_fonts[4];
 static int s_phase = 4;
 static int s_tilt = 0;
@@ -153,6 +155,18 @@ static void outline(GContext *ctx, GRect bounds, Rect r, GColor color, int width
 
 static int echo_reach(void) {
   return s_echoes<=3?s_echoes*3:9+(s_echoes-3)*4/3;
+}
+
+static int echo_base(void) {
+  int base=s_look==2?-echo_reach():echo_reach();
+  return s_echo_reverse?-base:base;
+}
+
+static GPoint echo_offset(void) {
+  int direction=s_echo_reverse?-1:1;
+  int base=echo_base();
+  return GPoint(base*s_phase/4+direction*(s_tilt+s_angle_x),
+                -base*s_phase/4+direction*s_angle_y);
 }
 
 static GColor echo_shade(Palette p,int index) {
@@ -308,18 +322,17 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
     }
     return;
   }
-  int reach=echo_reach();
-  int base=s_look==2?-reach:reach;
-  int dx=(base*s_phase)/4 + s_tilt + s_angle_x;
-  int dy=(-base*s_phase)/4 + s_angle_y;
+  GPoint offset=echo_offset();
+  int dx=offset.x;
+  int dy=offset.y;
   Rect rear={r.x+dx,r.y+dy,r.w,r.h};
   GColor top_shades[3]={p.accent,p.middle,p.depth};
   GColor side_shades[3]={p.depth,p.middle,p.accent};
-  if (s_angle_y>0) {
+  if (s_angle_y*(s_echo_reverse?-1:1)>0) {
     top_shades[0]=p.depth;
     top_shades[2]=p.accent;
   }
-  if (s_angle_x<0) {
+  if (s_angle_x*(s_echo_reverse?-1:1)<0) {
     side_shades[0]=p.accent;
     side_shades[2]=p.depth;
   }
@@ -411,11 +424,10 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
                s_font==10?s_custom_fonts[2]:
                s_font==11?s_custom_fonts[3]:fonts_get_system_font(keys[s_font-2]);
     int y=(s_font<=3)?72:((s_font>=8)?77:84);
-    int reach=echo_reach();
-    int base=s_look==2?-reach:reach;
-    int dx=(base*s_phase)/4+s_tilt+s_angle_x;
-    int dy=(-base*s_phase)/4+s_angle_y;
-    GPoint origin=point(bounds,-base/2,y);
+    GPoint offset=echo_offset();
+    int dx=offset.x;
+    int dy=offset.y;
+    GPoint origin=point(bounds,-echo_base()/2,y);
     if (front_pass) {
       graphics_context_set_text_color(ctx,p.front);
       graphics_draw_text(ctx,label,font,GRect(origin.x,origin.y,200,96),
@@ -443,8 +455,7 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
   int one_inset=(w-stroke)/2;
   int left_blank=first_digit==1?one_inset:0;
   int right_blank=last_digit==1?w-one_inset-stroke:0;
-  int reach=echo_reach();
-  int depth_bias=(s_look==2?-reach:reach)/2;
+  int depth_bias=echo_base()/2;
   int x=(200-total-left_blank+right_blank)/2-depth_bias;
   int y=62;
   int h=94;
@@ -619,6 +630,11 @@ static void inbox(DictionaryIterator *iter,void *context) {
     s_echoes=echo_value->value->int32;
     persist_write_int(PERSIST_ECHOES,s_echoes);
   }
+  Tuple *echo_reverse=dict_find(iter,MESSAGE_KEY_SETTING_ECHO_REVERSE);
+  if (echo_reverse && (echo_reverse->value->int32==0 || echo_reverse->value->int32==1)) {
+    s_echo_reverse=echo_reverse->value->int32;
+    persist_write_int(PERSIST_ECHO_REVERSE,s_echo_reverse);
+  }
   Tuple *mode=dict_find(iter,MESSAGE_KEY_SETTING_MODE);
   if (mode && mode->value->int32>=0 && mode->value->int32<=2) {
     s_mode=mode->value->int32; persist_write_int(PERSIST_MODE,s_mode);
@@ -679,6 +695,7 @@ int main(void) {
   if (persist_exists(PERSIST_FONT)) s_font=persist_read_int(PERSIST_FONT);
   if (persist_exists(PERSIST_BACKGROUND)) s_background=persist_read_int(PERSIST_BACKGROUND);
   if (persist_exists(PERSIST_ECHOES)) s_echoes=persist_read_int(PERSIST_ECHOES);
+  if (persist_exists(PERSIST_ECHO_REVERSE)) s_echo_reverse=persist_read_int(PERSIST_ECHO_REVERSE);
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
   s_motion=clamp(s_motion,0,1);
@@ -689,6 +706,7 @@ int main(void) {
   s_font=clamp(s_font,0,11);
   s_background=clamp(s_background,0,11);
   if (s_echoes<1 || s_echoes>12) s_echoes=3;
+  s_echo_reverse=clamp(s_echo_reverse,0,1);
 #ifdef GRIDCORE_FIXTURE
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;

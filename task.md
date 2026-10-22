@@ -181,15 +181,15 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [ ] Check 12-echo redraw and wrist motion on a physical Pebble Time 2.
 - [ ] Check 12-echo redraw and wrist motion on a physical Pebble Round 2.
 - [ ] Check watch battery behavior with 12 echoes enabled.
-- [ ] Create an Emery GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
-- [ ] Create a Gabbro GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
-- [ ] Keep each GIF under the store's 4.4 MB image limit.
-- [ ] Choose no more than five screenshots per target.
+- [x] Create an Emery GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
+- [x] Create a Gabbro GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
+- [x] Keep each GIF under the project's 4.4 MB media budget.
+- [x] Choose no more than five image assets per target.
 - [ ] Prepare the Way Back listing description.
 - [ ] Upload the production PBW to the Pebble Developer Dashboard.
 - [ ] Confirm the saved Emery media in the dashboard.
 - [ ] Confirm the saved Gabbro media in the dashboard.
-- [ ] Confirm the public listing serves version 0.5.1 to both targets.
+- [ ] Confirm the public listing serves version 0.6.0 to both targets.
 
 ## Way Back product rename — 2026-10-22
 
@@ -201,3 +201,27 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] The package version identifies the renamed build.
 - [x] The production PBW contains Emery and Gabbro binaries.
 - [x] A fresh verifier reviews the final package identity.
+
+## Reversible echo direction — 2026-10-22
+
+- [x] Phone settings offer a reverse echo direction toggle.
+- [x] Existing saved settings default to the current echo direction.
+- [x] Reversing the setting flips the echo response to the same wrist tilt.
+- [x] The foreground time stays fixed while the wrist tilts.
+- [x] The selected direction persists after restart.
+- [x] The setting works on Emery.
+- [x] The setting works on Gabbro.
+- [x] The final production PBW passes the package verifier.
+- [x] A fresh verifier reviews the completed direction behavior.
+
+## Way Back store media — 2026-10-22
+
+- [x] The Emery GIF shows both echo directions at a fixed wrist angle.
+- [x] The Gabbro GIF shows both echo directions at a fixed wrist angle.
+- [x] Each GIF shows at least three numeral styles.
+- [x] Each GIF shows at least three background patterns.
+- [x] Each GIF remains below 4.4 MB.
+- [x] Emery has four selected still screenshots from the GIF compositions.
+- [x] Gabbro has four selected still screenshots from the GIF compositions.
+- [x] Each final screenshot retains legible time and date at native resolution.
+- [x] A fresh verifier reviews the final media.

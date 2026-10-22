@@ -18,7 +18,8 @@ var DEFAULTS = {
   SETTING_DECORATION: 0,
   SETTING_FONT: 0,
   SETTING_BACKGROUND: 0,
-  SETTING_ECHOES: 3
+  SETTING_ECHOES: 3,
+  SETTING_ECHO_REVERSE: 0
 };
 
 function integer(value, min, max, fallback) {
@@ -47,7 +48,8 @@ function settingsMessage(raw) {
     SETTING_DECORATION: integer(saved.SETTING_DECORATION, 0, 7, DEFAULTS.SETTING_DECORATION),
     SETTING_FONT: integer(saved.SETTING_FONT, 0, 11, DEFAULTS.SETTING_FONT),
     SETTING_BACKGROUND: integer(saved.SETTING_BACKGROUND, 0, 11, DEFAULTS.SETTING_BACKGROUND),
-    SETTING_ECHOES: integer(saved.SETTING_ECHOES, 1, 12, DEFAULTS.SETTING_ECHOES)
+    SETTING_ECHOES: integer(saved.SETTING_ECHOES, 1, 12, DEFAULTS.SETTING_ECHOES),
+    SETTING_ECHO_REVERSE: integer(saved.SETTING_ECHO_REVERSE, 0, 1, DEFAULTS.SETTING_ECHO_REVERSE)
   };
 }
 
@@ -115,6 +117,7 @@ function configuration() {
       {label: '9', value: '9'}, {label: '10', value: '10'},
       {label: '11', value: '11'}, {label: '12', value: '12'}
     ]},
+    {type: 'toggle', messageKey: 'SETTING_ECHO_REVERSE', label: 'Reverse echo direction', defaultValue: false},
     {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
       {label: 'Auto by time', value: '2'},
       {label: 'Always day', value: '0'},

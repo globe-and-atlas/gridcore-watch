@@ -49,3 +49,8 @@
 ## 2026-10-22 — Product name
 
 - Name the watchface Way Back. Keep its Pebble UUID so existing local installs receive an update under the new name. Retain the `gridcore-watch` repository path and internal font resource identifiers to avoid renaming build fixtures or altering the licensed font subset during a product copy change.
+
+## 2026-10-22 — Echo direction and store media
+
+- Add a persisted reverse echo direction toggle, off by default. Multiply both the static depth and wrist-driven offsets by the selected direction, then recenter the whole time group so either trail orientation fits the screen. The foreground remains fixed while the wrist moves.
+- Use native fixed-time emulator captures for store media. Pair normal and reversed trails at the same simulated wrist angle, then vary numeral style, palette, and background between pairs. Keep the GIFs at native target resolution so every frame represents the watch renderer.

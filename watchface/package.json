@@ -1,7 +1,7 @@
 {
   "name": "way-back-watch",
   "author": "Daniel Bally",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "private": true,
   "keywords": ["pebble-app"],
   "pebble": {
@@ -18,7 +18,7 @@
       "SETTING_MODE", "SETTING_NIGHT_START", "SETTING_DAY_START",
       "SETTING_NIGHT_BG", "SETTING_NIGHT_FRONT", "SETTING_NIGHT_DEPTH",
       "SETTING_NIGHT_GRID", "SETTING_DECORATION", "SETTING_FONT",
-      "SETTING_BACKGROUND", "SETTING_ECHOES"
+      "SETTING_BACKGROUND", "SETTING_ECHOES", "SETTING_ECHO_REVERSE"
     ],
     "resources": {"media": [
       {"type": "font", "name": "CORMORANT_54", "file": "fonts/CormorantGaramond-600.ttf", "characterRegex": "[:0-9]"},
