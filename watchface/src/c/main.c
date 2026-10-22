@@ -157,16 +157,18 @@ static int echo_reach(void) {
   return s_echoes<=3?s_echoes*3:9+(s_echoes-3)*4/3;
 }
 
-static int echo_base(void) {
-  int base=s_look==2?-echo_reach():echo_reach();
-  return s_echo_reverse?-base:base;
-}
-
 static GPoint echo_offset(void) {
   int direction=s_echo_reverse?-1:1;
-  int base=echo_base();
-  return GPoint(base*s_phase/4+direction*(s_tilt+s_angle_x),
-                -base*s_phase/4+direction*s_angle_y);
+  int reach=echo_reach();
+  int base=s_look==2?-reach:reach;
+  int ax=s_angle_x<0?-s_angle_x:s_angle_x;
+  int ay=s_angle_y<0?-s_angle_y:s_angle_y;
+  int strength=ax>ay?ax:ay;
+  // At rest retain the familiar diagonal. A full wrist tilt points the
+  // depth around all eight screen directions; the foreground never moves.
+  int dx=(base*(3-strength)+reach*s_angle_x)*s_phase/12;
+  int dy=(-base*(3-strength)+reach*s_angle_y)*s_phase/12;
+  return GPoint(direction*(dx+s_tilt),direction*dy);
 }
 
 static GColor echo_shade(Palette p,int index) {
@@ -602,6 +604,14 @@ static void read_color(DictionaryIterator *iter,uint32_t key,int *value,int pers
 
 static void inbox(DictionaryIterator *iter,void *context) {
   (void)context;
+#ifdef GRIDCORE_FIXTURE
+  Tuple *angle_x=dict_find(iter,11000);
+  Tuple *angle_y=dict_find(iter,11001);
+  if (angle_x && angle_x->value->int32>=-3 && angle_x->value->int32<=3)
+    s_angle_x=angle_x->value->int32;
+  if (angle_y && angle_y->value->int32>=-3 && angle_y->value->int32<=3)
+    s_angle_y=angle_y->value->int32;
+#endif
   Tuple *look=dict_find(iter,MESSAGE_KEY_SETTING_LOOK);
   if (look && look->value->int32>=0 && look->value->int32<=5) {
     s_look=look->value->int32; persist_write_int(PERSIST_LOOK,s_look);

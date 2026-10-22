@@ -4,7 +4,7 @@ Way Back is a dimensional digital watchface for Pebble Time 2 (Emery) and Pebble
 
 The face includes Color Slices, Lift, Tunnel, Daylight Blueprint, Graphite, and a custom color look. Custom mode exposes separate day and night background, digit front, digit depth, and grid colors. Day, Night, and Auto modes are selectable. Auto follows the watch's local time; night starts at 7 p.m. and day starts at 7 a.m. by default, with both hours configurable. The date can be Off, YYYY-MM-DD, MM/DD/YYYY, or DD/MM/YYYY in either mode. It follows the watch's 12-hour or 24-hour preference. Live tilt parallax moves the digit depth while the front stays fixed. The setting can be turned off for a static face. A tap also briefly reveals the structure.
 
-An echo-count control offers 1 through 12 receding outlines; three remains the default. Reverse echo direction flips which way the trail recedes for the same wrist tilt, and keeps the previous direction as the default. The foreground digits stay fixed while wrist tilt shifts the echo depth. Twelve time numeral styles include segmented digital treatments, Pebble system faces, Space Grotesk, Cormorant Garamond, Bodoni Moda, and Book Serif. Eight independent decoration settings cover registration corners, short brackets, double brackets, crosshairs, edge ticks, dots, a full frame, and none. The full frame becomes a ring on Round 2. Both settings persist on the watch. The four external font sources are licensed under the SIL Open Font License; source licenses are in `licenses/`. Book Serif uses a subset derivative of Libre Baskerville with a renamed internal font family.
+An echo-count control offers 1 through 12 receding outlines; three remains the default. Wrist tilt can swing the echoes around the fixed foreground digits, and a reverse toggle flips their response to the same tilt. At rest, the echo keeps its familiar diagonal direction. Twelve time numeral styles include segmented digital treatments, Pebble system faces, Space Grotesk, Cormorant Garamond, Bodoni Moda, and Book Serif. Eight independent decoration settings cover registration corners, short brackets, double brackets, crosshairs, edge ticks, dots, a full frame, and none. The full frame becomes a ring on Round 2. Both settings persist on the watch. The four external font sources are licensed under the SIL Open Font License; source licenses are in `licenses/`. Book Serif uses a subset derivative of Libre Baskerville with a renamed internal font family.
 
 Twelve background patterns are selectable separately from the color look and corner decoration. Blueprint grid remains the default. Each pattern uses the current look's grid color, so it works with day, night, grayscale, and custom palettes. A Solid option leaves the background color plain.
 
@@ -20,7 +20,7 @@ The `media/` folder includes native day and night captures for both watch shapes
 
 ## Store media
 
-The animated previews hold the time and simulated wrist angle at 13:48 while each pair flips the echo direction. The foreground digits remain in exactly the same position within each pair. Across five pairs they show segmented, wire, digital, serif, and geometric numerals; blue, amber, daylight, grayscale, and green palettes; and five background patterns.
+The animated previews hold the time at 13:48 while the echo makes a clockwise eight-position circuit around fixed foreground digits. Five cycles show segmented, wire, digital, serif, and geometric numerals; blue, amber, daylight, grayscale, and green palettes; and five background patterns. The grayscale serif cycle shows the None decoration option without corner marks.
 
 ![Way Back options on Pebble Time 2](media/way-back-emery-options.gif)
 ![Way Back options on Pebble Round 2](media/way-back-gabbro-options.gif)
@@ -107,4 +107,4 @@ The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator b
 
 ## Release state
 
-Version 0.6.1 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.
+Version 0.7.0 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.

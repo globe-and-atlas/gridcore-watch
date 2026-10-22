@@ -4,6 +4,22 @@ timestamp: "2026-10-19T22:11:00-05:00"
 ---
 # Way Back watchface
 
+## Clockwise echo orbit — 2026-10-22
+
+- [x] Wrist tilt can place the echo above the digits.
+- [x] Wrist tilt can place the echo to the right of the digits.
+- [x] Wrist tilt can place the echo below the digits.
+- [x] Wrist tilt can place the echo to the left of the digits.
+- [x] The reverse setting reverses the tilt displacement.
+- [x] Foreground numeral pixels remain fixed through eight echo angles within each style.
+- [x] Each platform GIF visits eight echo angles clockwise within each style.
+- [x] Each platform GIF cycles through five font and background compositions.
+- [x] Each platform has four native still screenshots.
+- [x] The GIF includes a style with no corner decorations.
+- [x] The production PBW contains Emery and Gabbro binaries.
+- [x] Native production tilt captures demonstrate echo movement.
+- [x] A fresh verifier reviews the final PBW and media.
+
 ## Contract
 - Target directive: `directives/build_watchface.md`.
 - Intended execution script: `execution/verify_watchface.py`.
@@ -214,10 +230,12 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] The final production PBW passes the package verifier.
 - [x] A fresh verifier reviews the completed direction behavior.
 
-## Way Back store media — 2026-10-22
+## Way Back store media — 2026-10-22 (0.6.1 historical criteria)
 
-- [x] The Emery GIF shows both echo directions at a fixed wrist angle.
-- [x] The Gabbro GIF shows both echo directions at a fixed wrist angle.
+The paired-direction GIF was replaced by the clockwise orbit GIF specified above.
+
+- [x] The 0.6.1 Emery GIF showed both echo directions at a fixed wrist angle.
+- [x] The 0.6.1 Gabbro GIF showed both echo directions at a fixed wrist angle.
 - [x] Each GIF shows at least three numeral styles.
 - [x] Each GIF shows at least three background patterns.
 - [x] Each GIF remains below 4.4 MB.

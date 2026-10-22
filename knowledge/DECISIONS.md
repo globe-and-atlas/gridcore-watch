@@ -58,3 +58,8 @@
 ## 2026-10-22 — Fixed foreground during direction changes
 
 - Center the foreground numerals without a depth offset. Reverse direction changes only the echo vector, so the front has the same pixels in paired frames. Keep optical compensation for a narrow `1`. Check identical front-color pixel masks across every matched store-media pair before accepting GIFs.
+
+## 2026-10-22 — Clockwise echo orbit
+
+- Blend the resting diagonal echo toward the measured two-axis wrist angle. A full tilt reaches the eight surrounding directions; the reverse setting negates that displacement. The foreground remains centered independently of the trail.
+- Replace the paired-direction store animation with eight clockwise native angles per style. Cycle through five styles, including a graphite style with decoration set to None. Require identical foreground masks and visible echo changes for every adjacent frame.
