@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Add selectable numeral styles and corner decorations to Gridcore for Pebble Time 2 and Pebble Round 2.
+**Goal:** Add 12 selectable background patterns to Gridcore for Pebble Time 2 and Pebble Round 2.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Local version 0.3.0 built for both targets; 12 numeral styles and eight decorations captured at fixed 12:15. Independent verification passed. Store listing not created.
+**Status:** Local version 0.4.0 contains 12 background patterns for Emery and Gabbro; native previews and independent verification passed. Store listing not created.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,10 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Background scope: preserve Blueprint grid as the default, add 11 distinct patterns controlled separately from colors, capture all 12 at fixed 12:15 on both native targets, then rebuild production and seek fresh review.
+- 2026-10-22 - Background implementation: 12 native patterns and a new persisted setting added without changing the six looks or existing custom color keys. All 24 fixed-time native captures are distinct and include complete time/date content. Starfield persisted through an Emery reinstall; Radar rings also rendered in Graphite. Production v0.4.0 PBW, bundle verifier, and Node settings tests pass. Fresh review pending.
+- 2026-10-22 - Palette QA: Tunnel's old grid color vanished against its background after Pebble quantization. Raised its grid color to `0x5A3A1B` and recaptured a visible amber Diamond mesh on native Emery. Production v0.4.0 was clean-built and passed the bundle verifier and Node settings tests after the fix.
+- 2026-10-22 - Independent final review passed the 12 Clay options, persistent watch setting, all 24 fixed-time native background captures, three cross-palette examples, and the dual-target v0.4.0 PBW. Physical-watch behavior and RePebble publication remain unchecked.
 - 2026-10-22 - Style scope: add 12 persistent numeral choices, eight persistent decoration choices, native fixed-time previews on both targets, and a production rebuild after fixtures.
 - 2026-10-22 - Implementation: four SIL Open Font License source fonts were subset to digits and colon; text faces draw two color depth bands before a fixed foreground. The modified Libre Baskerville subset has the internal family and UI name Gridcore Book. Decorations remain independent of the grid; Round 2 uses a circular frame.
 - 2026-10-22 - Native QA: 12:15 captures produced for all 12 fonts and eight decorations on Emery and Gabbro. A Bodoni tilt comparison changed 2,261 depth pixels while the bright foreground mask was identical. New choices persisted through reinstall. Production v0.3.0 PBW, bundle verifier, Node settings tests, and syntax check pass. Fresh review pending.

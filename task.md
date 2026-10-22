@@ -112,3 +112,26 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] Each numeral choice has a moving depth trail when motion is on.
 - [x] The numeral choice persists after restart.
 - [x] Native previews show the numeral choices.
+
+## Background patterns — 2026-10-22
+
+- [x] Blueprint grid renders at native resolution.
+- [x] Fine graph renders at native resolution.
+- [x] Wide graph renders at native resolution.
+- [x] Dot matrix renders at native resolution.
+- [x] Crosshair field renders at native resolution.
+- [x] Diagonal lines render at native resolution.
+- [x] Diamond mesh renders at native resolution.
+- [x] Scanlines render at native resolution.
+- [x] Radar rings render at native resolution.
+- [x] Contour frames render at native resolution.
+- [x] Starfield renders at native resolution.
+- [x] Solid renders without a pattern.
+- [x] Background pattern is selectable independently of the color look.
+- [x] The selected background pattern persists after restart.
+- [x] Each background renders at 200×228 on Emery.
+- [x] Each background renders at 260×260 on Gabbro.
+- [x] Twelve native previews show each background on Emery.
+- [x] Twelve native previews show each background on Gabbro.
+- [x] The production PBW passes `python3 execution/verify_watchface.py`.
+- [x] A fresh verifier reviews the final PBW and previews.

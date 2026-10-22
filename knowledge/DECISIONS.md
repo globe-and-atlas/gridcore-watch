@@ -29,3 +29,9 @@
 - Keep the existing segmented clock as the default while offering eleven alternate numeral styles. Pebble system fonts cover several digital choices; four SIL Open Font License assets add larger geometric and classic silhouettes. Their embedded resources contain only digits and colon.
 - Draw the depth trail before a fixed foreground for every numeral choice. Text faces use two offset color bands to balance depth with legibility at 200 pixels wide.
 - Keep the measured grid independent from eight selectable decorations. Use a circular ring for the full-frame option on Gabbro.
+
+## 2026-10-22 — Background patterns
+
+- Keep the existing 16-pixel Blueprint grid as the default so upgrades preserve the face's current appearance.
+- Render 12 backgrounds from native Pebble drawing primitives. Reuse the active day, night, grayscale, or custom palette's grid color so pattern and color choices remain independent.
+- Keep the pattern behind the time and date. Do not include a separate colored bitmap resource for each combination.

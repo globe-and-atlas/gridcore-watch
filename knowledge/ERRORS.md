@@ -21,3 +21,10 @@ Record deterministic errors, root causes, and fixes here.
 - Cause: not established; no evidence links this to the watchface renderer. Production build and earlier native captures passed.
 - Recovery observed: `pebble kill` followed by install restored command responses briefly. The emulator later stalled again, so do not treat that recovery as durable.
 - Next check: restart one emulator at a time before any further native capture. Preserve the existing complete captures; do not accept transitional frames.
+
+# 2026-10-22 — Tunnel background pattern disappeared
+
+- Symptom: Diamond mesh selected with the Tunnel look appeared as a plain black background on native Emery.
+- Cause: the old Tunnel grid color `0x392B23` quantized to the same Pebble palette value as its near-black background.
+- Fix: change the Tunnel grid color to `0x5A3A1B`, which is visibly distinct on the device palette.
+- Graduated-to: color quantization must be checked on native screenshots when adding patterns to an existing look.

@@ -16,6 +16,7 @@
 #define PERSIST_NIGHT_GRID 14
 #define PERSIST_DECORATION 15
 #define PERSIST_FONT 16
+#define PERSIST_BACKGROUND 17
 
 typedef struct { int x, y, w, h; } Rect;
 typedef struct {
@@ -41,6 +42,7 @@ static int s_night_depth = 0x336688;
 static int s_night_grid = 0x273759;
 static int s_decoration = 0;
 static int s_font = 0;
+static int s_background = 0;  // Blueprint grid
 static GFont s_custom_fonts[4];
 static int s_phase = 4;
 static int s_tilt = 0;
@@ -88,7 +90,7 @@ static Palette palette(bool night) {
     middle=0x176277; accent=0xE9AC67; grid=0x1B3A42;
   } else if (s_look == 2) {
     bg=0x14100D; front=0xF3DFB5; depth=0xD48046;
-    middle=0x6F3D24; accent=0xE0A966; grid=0x392B23;
+    middle=0x6F3D24; accent=0xE0A966; grid=0x5A3A1B;
   } else if (s_look == 3) {
     bg=0xE5E8DF; front=0x143948; depth=0x47798E;
     middle=0xB7D1D2; accent=0xAA633F; grid=0xB8C9C9;
@@ -193,11 +195,49 @@ static void fill_quad(GContext *ctx, GRect bounds,
   gpath_destroy(path);
 }
 
-static void grid(GContext *ctx, GRect bounds, Palette p) {
-  for (int x=12; x<=188; x+=16)
-    line(ctx,bounds,x,14,x,214,p.grid,1);
-  for (int y=14; y<=214; y+=16)
-    line(ctx,bounds,12,y,188,y,p.grid,1);
+static void background_pattern(GContext *ctx, GRect bounds, Palette p) {
+  if (s_background==11) return;
+  if (s_background<=2) {
+    int step=s_background==0?16:(s_background==1?8:32);
+    for (int x=12;x<=188;x+=step)
+      line(ctx,bounds,x,14,x,214,p.grid,1);
+    for (int y=14;y<=214;y+=step)
+      line(ctx,bounds,12,y,188,y,p.grid,1);
+  } else if (s_background==3 || s_background==4) {
+    graphics_context_set_fill_color(ctx,p.grid);
+    for (int x=20;x<=180;x+=20) for (int y=24;y<=204;y+=20) {
+      if (s_background==3) graphics_fill_circle(ctx,point(bounds,x,y),1);
+      else {
+        line(ctx,bounds,x-2,y,x+2,y,p.grid,1);
+        line(ctx,bounds,x,y-2,x,y+2,p.grid,1);
+      }
+    }
+  } else if (s_background==5 || s_background==6) {
+    int step=s_background==5?20:32;
+    for (int x=-200;x<=200;x+=step) {
+      line(ctx,bounds,x,14,x+200,214,p.grid,1);
+      if (s_background==6)
+        line(ctx,bounds,x,214,x+200,14,p.grid,1);
+    }
+  } else if (s_background==7) {
+    for (int y=18;y<=210;y+=8)
+      line(ctx,bounds,12,y,188,y,p.grid,1);
+  } else if (s_background==8) {
+    graphics_context_set_stroke_color(ctx,p.grid);
+    graphics_context_set_stroke_width(ctx,1);
+    GPoint center=point(bounds,100,114);
+    for (int radius=24;radius<=120;radius+=24)
+      graphics_draw_circle(ctx,center,radius);
+  } else if (s_background==9) {
+    for (int i=0;i<6;i++)
+      outline(ctx,bounds,(Rect){14+12*i,18+12*i,172-24*i,192-24*i},p.grid,1);
+  } else if (s_background==10) {
+    graphics_context_set_fill_color(ctx,p.grid);
+    for (int i=0;i<48;i++) {
+      int x=15+(i*73)%170, y=18+(i*47)%190;
+      graphics_fill_circle(ctx,point(bounds,x,y),i%11==0?2:1);
+    }
+  }
 }
 
 static void decoration(GContext *ctx, GRect bounds, Palette p) {
@@ -409,7 +449,7 @@ static void redraw(Layer *layer,GContext *ctx) {
   Palette p=palette(is_night(local));
   graphics_context_set_fill_color(ctx,p.bg);
   graphics_fill_rect(ctx,bounds,0,GCornerNone);
-  grid(ctx,bounds,p);
+  background_pattern(ctx,bounds,p);
   decoration(ctx,bounds,p);
   draw_time(ctx,bounds,local,p,false);
   draw_time(ctx,bounds,local,p,true);
@@ -533,6 +573,11 @@ static void inbox(DictionaryIterator *iter,void *context) {
     s_font=font_value->value->int32;
     persist_write_int(PERSIST_FONT,s_font);
   }
+  Tuple *background_value=dict_find(iter,MESSAGE_KEY_SETTING_BACKGROUND);
+  if (background_value && background_value->value->int32>=0 && background_value->value->int32<=11) {
+    s_background=background_value->value->int32;
+    persist_write_int(PERSIST_BACKGROUND,s_background);
+  }
   Tuple *mode=dict_find(iter,MESSAGE_KEY_SETTING_MODE);
   if (mode && mode->value->int32>=0 && mode->value->int32<=2) {
     s_mode=mode->value->int32; persist_write_int(PERSIST_MODE,s_mode);
@@ -591,6 +636,7 @@ int main(void) {
   if (persist_exists(PERSIST_NIGHT_GRID)) s_night_grid=persist_read_int(PERSIST_NIGHT_GRID);
   if (persist_exists(PERSIST_DECORATION)) s_decoration=persist_read_int(PERSIST_DECORATION);
   if (persist_exists(PERSIST_FONT)) s_font=persist_read_int(PERSIST_FONT);
+  if (persist_exists(PERSIST_BACKGROUND)) s_background=persist_read_int(PERSIST_BACKGROUND);
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
   s_motion=clamp(s_motion,0,1);
@@ -599,6 +645,7 @@ int main(void) {
   s_day_start=clamp(s_day_start,5,9);
   s_decoration=clamp(s_decoration,0,7);
   s_font=clamp(s_font,0,11);
+  s_background=clamp(s_background,0,11);
 #ifdef GRIDCORE_FIXTURE
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;
@@ -608,6 +655,7 @@ int main(void) {
   s_angle_y=clamp(GRIDCORE_ANGLE_Y,-3,3);
   s_decoration=clamp(GRIDCORE_DECORATION,0,7);
   s_font=clamp(GRIDCORE_FONT,0,11);
+  s_background=clamp(GRIDCORE_BACKGROUND,0,11);
 #endif
   s_window=window_create();
   s_custom_fonts[0]=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_CORMORANT_54));

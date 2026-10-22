@@ -16,7 +16,8 @@ var DEFAULTS = {
   SETTING_NIGHT_DEPTH: 0x336688,
   SETTING_NIGHT_GRID: 0x273759,
   SETTING_DECORATION: 0,
-  SETTING_FONT: 0
+  SETTING_FONT: 0,
+  SETTING_BACKGROUND: 0
 };
 
 function integer(value, min, max, fallback) {
@@ -43,7 +44,8 @@ function settingsMessage(raw) {
     SETTING_NIGHT_DEPTH: integer(saved.SETTING_NIGHT_DEPTH, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_DEPTH),
     SETTING_NIGHT_GRID: integer(saved.SETTING_NIGHT_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_GRID),
     SETTING_DECORATION: integer(saved.SETTING_DECORATION, 0, 7, DEFAULTS.SETTING_DECORATION),
-    SETTING_FONT: integer(saved.SETTING_FONT, 0, 11, DEFAULTS.SETTING_FONT)
+    SETTING_FONT: integer(saved.SETTING_FONT, 0, 11, DEFAULTS.SETTING_FONT),
+    SETTING_BACKGROUND: integer(saved.SETTING_BACKGROUND, 0, 11, DEFAULTS.SETTING_BACKGROUND)
   };
 }
 
@@ -58,6 +60,20 @@ function configuration() {
       {label: 'Daylight Blueprint', value: '3'},
       {label: 'Graphite', value: '4'},
       {label: 'Custom colors', value: '5'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_BACKGROUND', label: 'Background pattern', defaultValue: '0', options: [
+      {label: 'Blueprint grid', value: '0'},
+      {label: 'Fine graph', value: '1'},
+      {label: 'Wide graph', value: '2'},
+      {label: 'Dot matrix', value: '3'},
+      {label: 'Crosshair field', value: '4'},
+      {label: 'Diagonal lines', value: '5'},
+      {label: 'Diamond mesh', value: '6'},
+      {label: 'Scanlines', value: '7'},
+      {label: 'Radar rings', value: '8'},
+      {label: 'Contour frames', value: '9'},
+      {label: 'Starfield', value: '10'},
+      {label: 'Solid', value: '11'}
     ]},
     {type: 'select', messageKey: 'SETTING_DATE', label: 'Date', defaultValue: '1', options: [
       {label: 'Off', value: '0'},
