@@ -14,3 +14,10 @@ Record deterministic errors, root causes, and fixes here.
 - Symptom: a screenshot contained only the grid or a partially drawn time after install, settings changes, or a tap.
 - Diagnosis: temporary draw logging measured full callbacks at roughly 8–23 ms; the emulator screenshot sometimes captured transitional framebuffer content. A subsequent capture showed the complete clock and date.
 - Remedy: inspect every screenshot and recapture until the complete face is visible. Do not use a partial frame as release media.
+
+# 2026-10-22 — Emery command timeout after repeated clock changes
+
+- Symptom: after repeated `pebble emu-set-time`, AppMessage, and screenshot calls, `pebble screenshot` and `pebble ping` timed out while QEMU remained running. A partially drawn date screenshot preceded the timeout.
+- Cause: not established; no evidence links this to the watchface renderer. Production build and earlier native captures passed.
+- Recovery observed: `pebble kill` followed by install restored command responses briefly. The emulator later stalled again, so do not treat that recovery as durable.
+- Next check: restart one emulator at a time before any further native capture. Preserve the existing complete captures; do not accept transitional frames.

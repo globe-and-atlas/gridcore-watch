@@ -59,3 +59,29 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] A tap reveal returns to the current tilt pose within three seconds.
 - [x] The production PBW contains Emery and Gabbro binaries.
 - [x] A fresh verifier reviews the tilt implementation and native captures.
+
+## Day and night settings — 2026-10-22
+
+- [x] Day mode uses the day palette at 02:15.
+- [x] Night mode uses the night palette at 14:15.
+- [x] Auto mode uses the day palette after the selected day start.
+- [x] Auto mode uses the night palette after the selected night start.
+- [x] Custom day background is configurable.
+- [x] Custom day digit front is configurable.
+- [x] Custom day digit depth is configurable.
+- [x] Custom day grid is configurable.
+- [x] Custom night background is configurable.
+- [x] Custom night digit front is configurable.
+- [x] Custom night digit depth is configurable.
+- [x] Custom night grid is configurable.
+- [x] A saved day palette survives watch restart.
+- [x] A saved night palette survives watch restart.
+- [x] Date Off hides the date in day mode.
+- [x] Date Off hides the date in night mode.
+- [x] YYYY-MM-DD renders in night mode.
+- [x] MM/DD/YYYY renders in night mode.
+- [x] DD/MM/YYYY renders in night mode.
+- [x] The dual-platform production PBW passes `python3 execution/verify_watchface.py`.
+- [x] Native Emery day and night captures are reviewed.
+- [x] Native Gabbro day and night captures are reviewed.
+- [x] A fresh verifier reviews the final settings and native captures.

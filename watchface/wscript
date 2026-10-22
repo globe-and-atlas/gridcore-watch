@@ -24,6 +24,7 @@ def build(ctx):
             ctx.env.append_value('DEFINES', 'GRIDCORE_MINUTE=%d' % int(os.environ.get('GRIDCORE_MINUTE', '15')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_LOOK=%d' % int(os.environ.get('GRIDCORE_LOOK', '0')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_DATE=%d' % int(os.environ.get('GRIDCORE_DATE', '1')))
+            ctx.env.append_value('DEFINES', 'GRIDCORE_MODE=%d' % int(os.environ.get('GRIDCORE_MODE', '2')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_ANGLE_X=%d' % int(os.environ.get('GRIDCORE_ANGLE_X', '0')))
             ctx.env.append_value('DEFINES', 'GRIDCORE_ANGLE_Y=%d' % int(os.environ.get('GRIDCORE_ANGLE_Y', '0')))
         ctx.set_group(ctx.env.PLATFORM_NAME)

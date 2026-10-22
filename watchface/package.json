@@ -1,7 +1,7 @@
 {
   "name": "gridcore-watch",
   "author": "Daniel Bally",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "keywords": ["pebble-app"],
   "pebble": {
@@ -14,7 +14,10 @@
     "capabilities": ["configurable"],
     "messageKeys": [
       "SETTING_LOOK", "SETTING_DATE", "SETTING_MOTION",
-      "SETTING_BG", "SETTING_FRONT", "SETTING_DEPTH", "SETTING_GRID"
+      "SETTING_BG", "SETTING_FRONT", "SETTING_DEPTH", "SETTING_GRID",
+      "SETTING_MODE", "SETTING_NIGHT_START", "SETTING_DAY_START",
+      "SETTING_NIGHT_BG", "SETTING_NIGHT_FRONT", "SETTING_NIGHT_DEPTH",
+      "SETTING_NIGHT_GRID"
     ],
     "resources": {"media": []}
   },

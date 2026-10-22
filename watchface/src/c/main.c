@@ -7,6 +7,13 @@
 #define PERSIST_FRONT 5
 #define PERSIST_DEPTH 6
 #define PERSIST_GRID 7
+#define PERSIST_MODE 8
+#define PERSIST_NIGHT_START 9
+#define PERSIST_DAY_START 10
+#define PERSIST_NIGHT_BG 11
+#define PERSIST_NIGHT_FRONT 12
+#define PERSIST_NIGHT_DEPTH 13
+#define PERSIST_NIGHT_GRID 14
 
 typedef struct { int x, y, w, h; } Rect;
 typedef struct {
@@ -23,6 +30,13 @@ static int s_bg = 0x0A1020;
 static int s_front = 0xF4F4DB;
 static int s_depth = 0x49B8D0;
 static int s_grid = 0x273759;
+static int s_mode = 2;  // Auto by local watch time
+static int s_night_start = 19;
+static int s_day_start = 7;
+static int s_night_bg = 0x000000;
+static int s_night_front = 0xC0C8D0;
+static int s_night_depth = 0x336688;
+static int s_night_grid = 0x273759;
 static int s_phase = 4;
 static int s_tilt = 0;
 static int s_angle_x;
@@ -55,9 +69,15 @@ static int angle_step(int32_t milligravity, int current) {
   return current;
 }
 
-static Palette palette(void) {
-  int bg=0x0A1020, front=0xF4F4DB, depth=0x547BD4;
-  int middle=0x49B8D0, accent=0x9BD47A, grid=0x273759;
+static bool is_night(const struct tm *local) {
+  if (s_mode==0) return false;
+  if (s_mode==1) return true;
+  return local->tm_hour>=s_night_start || local->tm_hour<s_day_start;
+}
+
+static Palette palette(bool night) {
+  int bg=0x142A45, front=0xF4F4DB, depth=0x547BD4;
+  int middle=0x49B8D0, accent=0x9BD47A, grid=0x2A5873;
   if (s_look == 1) {
     bg=0x08151A; front=0xF5F2DF; depth=0x5CD3DE;
     middle=0x176277; accent=0xE9AC67; grid=0x1B3A42;
@@ -75,6 +95,29 @@ static Palette palette(void) {
     middle=mix_hex(s_front,s_depth,2);
     accent=mix_hex(s_front,s_depth,3);
     grid=s_grid;
+  }
+  if (night) {
+    if (s_look==0) {
+      bg=0x000408; front=0xC4D2D9; depth=0x286082;
+      middle=0x327F8B; accent=0x79A883; grid=0x273759;
+    } else if (s_look==1) {
+      bg=0x000808; front=0xC6DBD8; depth=0x225F66;
+      middle=0x174049; accent=0x8A7B55; grid=0x23524D;
+    } else if (s_look==2) {
+      bg=0x080400; front=0xCCB78F; depth=0x7A4927;
+      middle=0x4B2B18; accent=0xA37F4B; grid=0x5A3A1B;
+    } else if (s_look==3) {
+      bg=0x07131D; front=0xB3C7CD; depth=0x346478;
+      middle=0x163A49; accent=0x967754; grid=0x273759;
+    } else if (s_look==4) {
+      bg=0x000000; front=0xAAAAAA; depth=0x555555;
+      middle=0x333333; accent=0xAAAAAA; grid=0x555555;
+    } else {
+      bg=s_night_bg; front=s_night_front; depth=s_night_depth;
+      middle=mix_hex(s_night_front,s_night_depth,2);
+      accent=mix_hex(s_night_front,s_night_depth,3);
+      grid=s_night_grid;
+    }
   }
   return (Palette){GColorFromHEX(bg), GColorFromHEX(front),
                    GColorFromHEX(depth), GColorFromHEX(middle),
@@ -221,10 +264,9 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
 }
 
 static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h,
-                  bool front_pass) {
+                  Palette p,bool front_pass) {
   static const uint8_t bits[10]={63,6,91,79,102,109,125,7,127,111};
   if (value<0 || value>9) return;
-  Palette p=palette();
   int t=w>=36?8:7;
   Rect seg[7]={
     {x+t/2,y,w-t,t},
@@ -240,7 +282,7 @@ static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h,
 }
 
 static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
-                      bool front_pass) {
+                      Palette p,bool front_pass) {
   int hour=local->tm_hour;
   if (!clock_is_24h_style()) hour=hour%12?hour%12:12;
   int two_hours=hour>=10;
@@ -251,17 +293,16 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
   int x=(200-total)/2;
   int y=62;
   int h=94;
-  if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h,front_pass); x+=w+gap; }
-  digit(ctx,bounds,hour%10,x,y,w,h,front_pass);
+  if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h,p,front_pass); x+=w+gap; }
+  digit(ctx,bounds,hour%10,x,y,w,h,p,front_pass);
   x+=w;
-  Palette p=palette();
   Rect upper={x+colon_gap/2-3,y+31,6,6};
   Rect lower={x+colon_gap/2-3,y+60,6,6};
   prism(ctx,bounds,upper,p,front_pass); prism(ctx,bounds,lower,p,front_pass);
   x+=colon_gap;
-  digit(ctx,bounds,local->tm_min/10,x,y,w,h,front_pass);
+  digit(ctx,bounds,local->tm_min/10,x,y,w,h,p,front_pass);
   x+=w+gap;
-  digit(ctx,bounds,local->tm_min%10,x,y,w,h,front_pass);
+  digit(ctx,bounds,local->tm_min%10,x,y,w,h,p,front_pass);
 }
 
 static void draw_date(GContext *ctx,GRect bounds,struct tm *local,Palette p) {
@@ -278,10 +319,6 @@ static void draw_date(GContext *ctx,GRect bounds,struct tm *local,Palette p) {
 
 static void redraw(Layer *layer,GContext *ctx) {
   GRect bounds=layer_get_bounds(layer);
-  Palette p=palette();
-  graphics_context_set_fill_color(ctx,p.bg);
-  graphics_fill_rect(ctx,bounds,0,GCornerNone);
-  grid(ctx,bounds,p);
   time_t now=time(NULL);
   struct tm *local=localtime(&now);
 #ifdef GRIDCORE_FIXTURE
@@ -290,8 +327,12 @@ static void redraw(Layer *layer,GContext *ctx) {
   fixture.tm_min=GRIDCORE_MINUTE;
   local=&fixture;
 #endif
-  draw_time(ctx,bounds,local,false);
-  draw_time(ctx,bounds,local,true);
+  Palette p=palette(is_night(local));
+  graphics_context_set_fill_color(ctx,p.bg);
+  graphics_fill_rect(ctx,bounds,0,GCornerNone);
+  grid(ctx,bounds,p);
+  draw_time(ctx,bounds,local,p,false);
+  draw_time(ctx,bounds,local,p,true);
   draw_date(ctx,bounds,local,p);
 }
 
@@ -402,6 +443,20 @@ static void inbox(DictionaryIterator *iter,void *context) {
   if (date && date->value->int32>=0 && date->value->int32<=3) {
     s_date=date->value->int32; persist_write_int(PERSIST_DATE,s_date);
   }
+  Tuple *mode=dict_find(iter,MESSAGE_KEY_SETTING_MODE);
+  if (mode && mode->value->int32>=0 && mode->value->int32<=2) {
+    s_mode=mode->value->int32; persist_write_int(PERSIST_MODE,s_mode);
+  }
+  Tuple *night_start=dict_find(iter,MESSAGE_KEY_SETTING_NIGHT_START);
+  if (night_start && night_start->value->int32>=18 && night_start->value->int32<=22) {
+    s_night_start=night_start->value->int32;
+    persist_write_int(PERSIST_NIGHT_START,s_night_start);
+  }
+  Tuple *day_start=dict_find(iter,MESSAGE_KEY_SETTING_DAY_START);
+  if (day_start && day_start->value->int32>=5 && day_start->value->int32<=9) {
+    s_day_start=day_start->value->int32;
+    persist_write_int(PERSIST_DAY_START,s_day_start);
+  }
   Tuple *motion=dict_find(iter,MESSAGE_KEY_SETTING_MOTION);
   if (motion && (motion->value->int32==0 || motion->value->int32==1)) {
     s_motion=motion->value->int32; persist_write_int(PERSIST_MOTION,s_motion);
@@ -411,6 +466,10 @@ static void inbox(DictionaryIterator *iter,void *context) {
   read_color(iter,MESSAGE_KEY_SETTING_FRONT,&s_front,PERSIST_FRONT);
   read_color(iter,MESSAGE_KEY_SETTING_DEPTH,&s_depth,PERSIST_DEPTH);
   read_color(iter,MESSAGE_KEY_SETTING_GRID,&s_grid,PERSIST_GRID);
+  read_color(iter,MESSAGE_KEY_SETTING_NIGHT_BG,&s_night_bg,PERSIST_NIGHT_BG);
+  read_color(iter,MESSAGE_KEY_SETTING_NIGHT_FRONT,&s_night_front,PERSIST_NIGHT_FRONT);
+  read_color(iter,MESSAGE_KEY_SETTING_NIGHT_DEPTH,&s_night_depth,PERSIST_NIGHT_DEPTH);
+  read_color(iter,MESSAGE_KEY_SETTING_NIGHT_GRID,&s_night_grid,PERSIST_NIGHT_GRID);
   layer_mark_dirty(s_layer);
 }
 
@@ -433,12 +492,23 @@ int main(void) {
   if (persist_exists(PERSIST_FRONT)) s_front=persist_read_int(PERSIST_FRONT);
   if (persist_exists(PERSIST_DEPTH)) s_depth=persist_read_int(PERSIST_DEPTH);
   if (persist_exists(PERSIST_GRID)) s_grid=persist_read_int(PERSIST_GRID);
+  if (persist_exists(PERSIST_MODE)) s_mode=persist_read_int(PERSIST_MODE);
+  if (persist_exists(PERSIST_NIGHT_START)) s_night_start=persist_read_int(PERSIST_NIGHT_START);
+  if (persist_exists(PERSIST_DAY_START)) s_day_start=persist_read_int(PERSIST_DAY_START);
+  if (persist_exists(PERSIST_NIGHT_BG)) s_night_bg=persist_read_int(PERSIST_NIGHT_BG);
+  if (persist_exists(PERSIST_NIGHT_FRONT)) s_night_front=persist_read_int(PERSIST_NIGHT_FRONT);
+  if (persist_exists(PERSIST_NIGHT_DEPTH)) s_night_depth=persist_read_int(PERSIST_NIGHT_DEPTH);
+  if (persist_exists(PERSIST_NIGHT_GRID)) s_night_grid=persist_read_int(PERSIST_NIGHT_GRID);
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
   s_motion=clamp(s_motion,0,1);
+  s_mode=clamp(s_mode,0,2);
+  s_night_start=clamp(s_night_start,18,22);
+  s_day_start=clamp(s_day_start,5,9);
 #ifdef GRIDCORE_FIXTURE
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;
+  s_mode=GRIDCORE_MODE;
   s_motion=0;
   s_angle_x=clamp(GRIDCORE_ANGLE_X,-3,3);
   s_angle_y=clamp(GRIDCORE_ANGLE_Y,-3,3);
@@ -449,7 +519,7 @@ int main(void) {
   tick_timer_service_subscribe(MINUTE_UNIT,tick);
   update_motion_subscription();
   app_message_register_inbox_received(inbox);
-  app_message_open(128,64);
+  app_message_open(256,64);
   app_event_loop();
   if (s_reveal_timer) app_timer_cancel(s_reveal_timer);
   app_message_deregister_callbacks();

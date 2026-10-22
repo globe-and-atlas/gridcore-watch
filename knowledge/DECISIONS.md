@@ -17,3 +17,9 @@
 - Make the tilt setting on by default for new installs because the depth motion is central to this face; retain a static setting for people who prefer it. Existing saved choices remain in effect.
 - Quantize filtered accelerometer x/y into seven positions per axis, with 50 mG hysteresis on each side of a boundary and redraw only when a position changes. This limits jitter and redraw activity at rest.
 - Keep the digit front fixed and move the rear extrusion up to three pixels with three stepped colors. The accelerometer measures wrist orientation relative to gravity, not the viewer's eye position.
+
+## 2026-10-22 — Day and night settings
+
+- Preserve the existing four custom color values as the day palette, then add four independent night values. This keeps earlier saved color choices intact.
+- Offer Day, Night, and Auto. Auto uses the watch's local hour, with configurable night start (6–10 p.m.) and day start (5–9 a.m.); defaults are 7 p.m. and 7 a.m. The minute tick already redraws the face at those boundaries.
+- Give each built-in look a night palette so the mode works outside Custom colors. Keep the night grid visible after quantization to Pebble's 64-color palette.

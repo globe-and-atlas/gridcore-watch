@@ -7,7 +7,14 @@ var DEFAULTS = {
   SETTING_BG: 0x0A1020,
   SETTING_FRONT: 0xF4F4DB,
   SETTING_DEPTH: 0x49B8D0,
-  SETTING_GRID: 0x273759
+  SETTING_GRID: 0x273759,
+  SETTING_MODE: 2,
+  SETTING_NIGHT_START: 19,
+  SETTING_DAY_START: 7,
+  SETTING_NIGHT_BG: 0x000000,
+  SETTING_NIGHT_FRONT: 0xC0C8D0,
+  SETTING_NIGHT_DEPTH: 0x336688,
+  SETTING_NIGHT_GRID: 0x273759
 };
 
 function integer(value, min, max, fallback) {
@@ -25,7 +32,14 @@ function settingsMessage(raw) {
     SETTING_BG: integer(saved.SETTING_BG, 0, 0xFFFFFF, DEFAULTS.SETTING_BG),
     SETTING_FRONT: integer(saved.SETTING_FRONT, 0, 0xFFFFFF, DEFAULTS.SETTING_FRONT),
     SETTING_DEPTH: integer(saved.SETTING_DEPTH, 0, 0xFFFFFF, DEFAULTS.SETTING_DEPTH),
-    SETTING_GRID: integer(saved.SETTING_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_GRID)
+    SETTING_GRID: integer(saved.SETTING_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_GRID),
+    SETTING_MODE: integer(saved.SETTING_MODE, 0, 2, DEFAULTS.SETTING_MODE),
+    SETTING_NIGHT_START: integer(saved.SETTING_NIGHT_START, 18, 22, DEFAULTS.SETTING_NIGHT_START),
+    SETTING_DAY_START: integer(saved.SETTING_DAY_START, 5, 9, DEFAULTS.SETTING_DAY_START),
+    SETTING_NIGHT_BG: integer(saved.SETTING_NIGHT_BG, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_BG),
+    SETTING_NIGHT_FRONT: integer(saved.SETTING_NIGHT_FRONT, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_FRONT),
+    SETTING_NIGHT_DEPTH: integer(saved.SETTING_NIGHT_DEPTH, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_DEPTH),
+    SETTING_NIGHT_GRID: integer(saved.SETTING_NIGHT_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_GRID)
   };
 }
 
@@ -47,13 +61,33 @@ function configuration() {
       {label: 'MM/DD/YYYY', value: '2'},
       {label: 'DD/MM/YYYY', value: '3'}
     ]},
+    {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
+      {label: 'Auto by time', value: '2'},
+      {label: 'Always day', value: '0'},
+      {label: 'Always night', value: '1'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_NIGHT_START', label: 'Night starts', defaultValue: '19', options: [
+      {label: '6 PM', value: '18'}, {label: '7 PM', value: '19'},
+      {label: '8 PM', value: '20'}, {label: '9 PM', value: '21'},
+      {label: '10 PM', value: '22'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_DAY_START', label: 'Day starts', defaultValue: '7', options: [
+      {label: '5 AM', value: '5'}, {label: '6 AM', value: '6'},
+      {label: '7 AM', value: '7'}, {label: '8 AM', value: '8'},
+      {label: '9 AM', value: '9'}
+    ]},
     {type: 'toggle', messageKey: 'SETTING_MOTION', label: 'Live tilt parallax', defaultValue: true},
-    {type: 'heading', defaultValue: 'Custom colors'},
-    {type: 'text', defaultValue: 'Choose Custom colors above to use these four picks.'},
-    {type: 'color', messageKey: 'SETTING_BG', label: 'Background', defaultValue: '0A1020', sunlight: false, allowGray: true},
-    {type: 'color', messageKey: 'SETTING_FRONT', label: 'Digit front', defaultValue: 'F4F4DB', sunlight: false, allowGray: true},
-    {type: 'color', messageKey: 'SETTING_DEPTH', label: 'Digit depth', defaultValue: '49B8D0', sunlight: false, allowGray: true},
-    {type: 'color', messageKey: 'SETTING_GRID', label: 'Grid', defaultValue: '273759', sunlight: false, allowGray: true},
+    {type: 'heading', defaultValue: 'Custom day colors'},
+    {type: 'text', defaultValue: 'Choose Custom colors above to use these colors. Day and night picks are independent.'},
+    {type: 'color', messageKey: 'SETTING_BG', label: 'Day background', defaultValue: '0A1020', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_FRONT', label: 'Day digit front', defaultValue: 'F4F4DB', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_DEPTH', label: 'Day digit depth', defaultValue: '49B8D0', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_GRID', label: 'Day grid', defaultValue: '273759', sunlight: false, allowGray: true},
+    {type: 'heading', defaultValue: 'Custom night colors'},
+    {type: 'color', messageKey: 'SETTING_NIGHT_BG', label: 'Night background', defaultValue: '000000', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_NIGHT_FRONT', label: 'Night digit front', defaultValue: 'C0C8D0', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_NIGHT_DEPTH', label: 'Night digit depth', defaultValue: '336688', sunlight: false, allowGray: true},
+    {type: 'color', messageKey: 'SETTING_NIGHT_GRID', label: 'Night grid', defaultValue: '273759', sunlight: false, allowGray: true},
     {type: 'submit', defaultValue: 'Save to watch'}
   ];
 }
