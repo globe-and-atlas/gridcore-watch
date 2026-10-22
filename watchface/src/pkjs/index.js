@@ -17,7 +17,8 @@ var DEFAULTS = {
   SETTING_NIGHT_GRID: 0x273759,
   SETTING_DECORATION: 0,
   SETTING_FONT: 0,
-  SETTING_BACKGROUND: 0
+  SETTING_BACKGROUND: 0,
+  SETTING_ECHOES: 3
 };
 
 function integer(value, min, max, fallback) {
@@ -45,7 +46,8 @@ function settingsMessage(raw) {
     SETTING_NIGHT_GRID: integer(saved.SETTING_NIGHT_GRID, 0, 0xFFFFFF, DEFAULTS.SETTING_NIGHT_GRID),
     SETTING_DECORATION: integer(saved.SETTING_DECORATION, 0, 7, DEFAULTS.SETTING_DECORATION),
     SETTING_FONT: integer(saved.SETTING_FONT, 0, 11, DEFAULTS.SETTING_FONT),
-    SETTING_BACKGROUND: integer(saved.SETTING_BACKGROUND, 0, 11, DEFAULTS.SETTING_BACKGROUND)
+    SETTING_BACKGROUND: integer(saved.SETTING_BACKGROUND, 0, 11, DEFAULTS.SETTING_BACKGROUND),
+    SETTING_ECHOES: integer(saved.SETTING_ECHOES, 1, 12, DEFAULTS.SETTING_ECHOES)
   };
 }
 
@@ -104,6 +106,14 @@ function configuration() {
       {label: 'Bodoni Moda', value: '9'},
       {label: 'Space Grotesk', value: '10'},
       {label: 'Gridcore Book', value: '11'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_ECHOES', label: 'Number echoes', defaultValue: '3', options: [
+      {label: '1', value: '1'}, {label: '2', value: '2'},
+      {label: '3', value: '3'}, {label: '4', value: '4'},
+      {label: '5', value: '5'}, {label: '6', value: '6'},
+      {label: '7', value: '7'}, {label: '8', value: '8'},
+      {label: '9', value: '9'}, {label: '10', value: '10'},
+      {label: '11', value: '11'}, {label: '12', value: '12'}
     ]},
     {type: 'select', messageKey: 'SETTING_MODE', label: 'Day / night', defaultValue: '2', options: [
       {label: 'Auto by time', value: '2'},

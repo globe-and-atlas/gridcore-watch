@@ -148,3 +148,45 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] The alternate text font choices remain unaffected.
 - [x] The production PBW passes `python3 execution/verify_watchface.py`.
 - [x] A fresh verifier reviews the native before/after captures.
+
+## Visible time centering — 2026-10-22
+
+- [x] The visible 13:48 clock is horizontally centered on Emery.
+- [x] The visible 13:48 clock is horizontally centered on Gabbro.
+- [x] A time without a leading 1 remains centered on Emery.
+- [x] A time without a leading 1 remains centered on Gabbro.
+- [x] The date remains visible in the final Emery capture.
+- [x] The date remains visible in the final Gabbro capture.
+- [x] Six current looks render on Emery.
+- [x] Six current looks render on Gabbro.
+- [x] The production PBW passes the dual-target verifier.
+- [x] A fresh verifier reviews the final captures.
+
+## Selectable number echoes — 2026-10-22
+
+- [x] Phone settings offer each count from 1 through 12.
+- [x] An old saved configuration defaults to 3 echoes.
+- [x] Invalid echo counts revert to 3.
+- [x] The selected echo count persists after a watch restart.
+- [x] One echo has a visibly shorter trail than three echoes on Emery.
+- [x] Twelve echoes have a visibly deeper trail than three echoes on Emery.
+- [x] Twelve echoes preserve a readable foreground on Emery.
+- [x] Twelve echoes preserve a readable foreground on Gabbro.
+- [x] Echo count affects the alternate text fonts.
+- [x] The release PBW contains the echo setting on both targets.
+- [x] A fresh verifier reviews the final echo captures.
+
+## Before Gridcore store publication — 2026-10-22
+
+- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Time 2.
+- [ ] Check 12-echo redraw and wrist motion on a physical Pebble Round 2.
+- [ ] Check watch battery behavior with 12 echoes enabled.
+- [ ] Create an Emery GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
+- [ ] Create a Gabbro GIF showing Color Slices, Tunnel, Daylight Blueprint, Graphite, and custom green.
+- [ ] Keep each GIF under the store's 4.4 MB image limit.
+- [ ] Choose no more than five screenshots per target.
+- [ ] Prepare the Gridcore listing description.
+- [ ] Upload the production PBW to the Pebble Developer Dashboard.
+- [ ] Confirm the saved Emery media in the dashboard.
+- [ ] Confirm the saved Gabbro media in the dashboard.
+- [ ] Confirm the public listing serves version 0.5.0 to both targets.

@@ -40,3 +40,8 @@
 
 - Extend vertical strokes nearly to the cell edge when the digit has no cap at that edge. This gives `1` and `4` an apparent height comparable to capped digits such as `3` and `8`.
 - Center the narrow `1` within its cell. Shorten and slightly thin the top and bottom cap segments so capped numerals carry less horizontal mass. Keep the 12 font choices and clock spacing unchanged.
+
+## 2026-10-22 — Visible clock centering and selectable echoes
+
+- Center the visible clock, including its nominal extrusion, instead of only centering equal-width digit cells. Account for the narrow `1` at either end of the time. Keep tilt motion separate from this fixed layout offset so the foreground never shifts with the wrist.
+- Offer 1–12 echoes, defaulting to three for existing installations. Grow the maximum reach gradually to 21 pixels at twelve echoes, and use progressively quieter colors for distant layers above three echoes. Preserve a fixed foreground for both segmented and text numeral styles.

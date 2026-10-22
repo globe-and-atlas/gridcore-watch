@@ -17,6 +17,7 @@
 #define PERSIST_DECORATION 15
 #define PERSIST_FONT 16
 #define PERSIST_BACKGROUND 17
+#define PERSIST_ECHOES 18
 
 typedef struct { int x, y, w, h; } Rect;
 typedef struct {
@@ -43,6 +44,7 @@ static int s_night_grid = 0x273759;
 static int s_decoration = 0;
 static int s_font = 0;
 static int s_background = 0;  // Blueprint grid
+static int s_echoes = 3;
 static GFont s_custom_fonts[4];
 static int s_phase = 4;
 static int s_tilt = 0;
@@ -147,6 +149,16 @@ static void outline(GContext *ctx, GRect bounds, Rect r, GColor color, int width
   line(ctx,bounds,r.x+r.w,r.y,r.x+r.w,r.y+r.h,color,width);
   line(ctx,bounds,r.x+r.w,r.y+r.h,r.x,r.y+r.h,color,width);
   line(ctx,bounds,r.x,r.y+r.h,r.x,r.y,color,width);
+}
+
+static int echo_reach(void) {
+  return s_echoes<=3?s_echoes*3:9+(s_echoes-3)*4/3;
+}
+
+static GColor echo_shade(Palette p,int index) {
+  if (index*3>s_echoes*2) return p.grid;
+  if (index*3>s_echoes) return p.depth;
+  return p.middle;
 }
 
 static void fill_rect(GContext *ctx, GRect bounds, Rect r, GColor color) {
@@ -296,9 +308,10 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
     }
     return;
   }
-  int base=s_look==2?-7:9;
+  int reach=echo_reach();
+  int base=s_look==2?-reach:reach;
   int dx=(base*s_phase)/4 + s_tilt + s_angle_x;
-  int dy=((s_look==2?7:-9)*s_phase)/4 + s_angle_y;
+  int dy=(-base*s_phase)/4 + s_angle_y;
   Rect rear={r.x+dx,r.y+dy,r.w,r.h};
   GColor top_shades[3]={p.accent,p.middle,p.depth};
   GColor side_shades[3]={p.depth,p.middle,p.accent};
@@ -314,9 +327,10 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
     int ax=s_angle_x<0?-s_angle_x:s_angle_x;
     int ay=s_angle_y<0?-s_angle_y:s_angle_y;
     GColor *slice_shades=ay>ax?top_shades:side_shades;
-    for (int i=1;i<=3;i++) {
-      Rect slice={r.x+dx*i/3,r.y+dy*i/3,r.w,r.h};
-      outline(ctx,bounds,slice,slice_shades[i-1],1);
+    for (int i=s_echoes;i>=1;i--) {
+      Rect slice={r.x+dx*i/s_echoes,r.y+dy*i/s_echoes,r.w,r.h};
+      GColor shade=s_echoes<=3?slice_shades[(i-1)%3]:echo_shade(p,i);
+      outline(ctx,bounds,slice,shade,1);
     }
     line(ctx,bounds,r.x,r.y,r.x+dx,r.y+dy,p.accent,1);
     line(ctx,bounds,r.x+r.w,r.y,r.x+r.w+dx,r.y+dy,p.middle,1);
@@ -339,6 +353,11 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
       int x=(i&1)?r.x+r.w:r.x;
       int y=(i&2)?r.y+r.h:r.y;
       line(ctx,bounds,x,y,x+dx,y+dy,p.depth,1);
+    }
+    for (int i=s_echoes;i>=1;i--) {
+      Rect slice={r.x+dx*i/s_echoes,r.y+dy*i/s_echoes,r.w,r.h};
+      GColor shade=s_echoes<=3?(i==1?p.depth:i==2?p.middle:p.accent):echo_shade(p,i);
+      outline(ctx,bounds,slice,shade,1);
     }
   }
 }
@@ -392,22 +411,24 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
                s_font==10?s_custom_fonts[2]:
                s_font==11?s_custom_fonts[3]:fonts_get_system_font(keys[s_font-2]);
     int y=(s_font<=3)?72:((s_font>=8)?77:84);
-    int dx=(9*s_phase)/4+s_tilt+s_angle_x;
-    int dy=(-9*s_phase)/4+s_angle_y;
-    GPoint origin=point(bounds,0,y);
+    int reach=echo_reach();
+    int base=s_look==2?-reach:reach;
+    int dx=(base*s_phase)/4+s_tilt+s_angle_x;
+    int dy=(-base*s_phase)/4+s_angle_y;
+    GPoint origin=point(bounds,-base/2,y);
     if (front_pass) {
       graphics_context_set_text_color(ctx,p.front);
       graphics_draw_text(ctx,label,font,GRect(origin.x,origin.y,200,96),
                          GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,NULL);
     } else {
-      graphics_context_set_text_color(ctx,s_angle_x<0?p.middle:p.depth);
-      graphics_draw_text(ctx,label,font,
-                         GRect(origin.x+dx,origin.y+dy,200,96),
-                         GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,NULL);
-      graphics_context_set_text_color(ctx,s_angle_x<0?p.depth:p.middle);
-      graphics_draw_text(ctx,label,font,
-                         GRect(origin.x+dx/2,origin.y+dy/2,200,96),
-                         GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,NULL);
+      for (int i=s_echoes;i>=1;i--) {
+        GColor shade=s_echoes<=3?(i==1?p.depth:i==2?p.middle:p.accent):echo_shade(p,i);
+        graphics_context_set_text_color(ctx,shade);
+        graphics_draw_text(ctx,label,font,
+                           GRect(origin.x+dx*i/s_echoes,
+                                 origin.y+dy*i/s_echoes,200,96),
+                           GTextOverflowModeTrailingEllipsis,GTextAlignmentCenter,NULL);
+      }
     }
     return;
   }
@@ -416,7 +437,15 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
   int gap=two_hours?6:8;
   int colon_gap=two_hours?12:14;
   int total=(two_hours?2:1)*w+2*w+gap*(two_hours?2:1)+colon_gap;
-  int x=(200-total)/2;
+  int first_digit=two_hours?hour/10:hour%10;
+  int last_digit=local->tm_min%10;
+  int stroke=w>=36?8:7;
+  int one_inset=(w-stroke)/2;
+  int left_blank=first_digit==1?one_inset:0;
+  int right_blank=last_digit==1?w-one_inset-stroke:0;
+  int reach=echo_reach();
+  int depth_bias=(s_look==2?-reach:reach)/2;
+  int x=(200-total-left_blank+right_blank)/2-depth_bias;
   int y=62;
   int h=94;
   if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h,p,front_pass); x+=w+gap; }
@@ -585,6 +614,11 @@ static void inbox(DictionaryIterator *iter,void *context) {
     s_background=background_value->value->int32;
     persist_write_int(PERSIST_BACKGROUND,s_background);
   }
+  Tuple *echo_value=dict_find(iter,MESSAGE_KEY_SETTING_ECHOES);
+  if (echo_value && echo_value->value->int32>=1 && echo_value->value->int32<=12) {
+    s_echoes=echo_value->value->int32;
+    persist_write_int(PERSIST_ECHOES,s_echoes);
+  }
   Tuple *mode=dict_find(iter,MESSAGE_KEY_SETTING_MODE);
   if (mode && mode->value->int32>=0 && mode->value->int32<=2) {
     s_mode=mode->value->int32; persist_write_int(PERSIST_MODE,s_mode);
@@ -644,6 +678,7 @@ int main(void) {
   if (persist_exists(PERSIST_DECORATION)) s_decoration=persist_read_int(PERSIST_DECORATION);
   if (persist_exists(PERSIST_FONT)) s_font=persist_read_int(PERSIST_FONT);
   if (persist_exists(PERSIST_BACKGROUND)) s_background=persist_read_int(PERSIST_BACKGROUND);
+  if (persist_exists(PERSIST_ECHOES)) s_echoes=persist_read_int(PERSIST_ECHOES);
   s_look=clamp(s_look,0,5);
   s_date=clamp(s_date,0,3);
   s_motion=clamp(s_motion,0,1);
@@ -653,6 +688,7 @@ int main(void) {
   s_decoration=clamp(s_decoration,0,7);
   s_font=clamp(s_font,0,11);
   s_background=clamp(s_background,0,11);
+  if (s_echoes<1 || s_echoes>12) s_echoes=3;
 #ifdef GRIDCORE_FIXTURE
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;
@@ -663,6 +699,7 @@ int main(void) {
   s_decoration=clamp(GRIDCORE_DECORATION,0,7);
   s_font=clamp(GRIDCORE_FONT,0,11);
   s_background=clamp(GRIDCORE_BACKGROUND,0,11);
+  s_echoes=clamp(GRIDCORE_ECHOES,1,12);
 #endif
   s_window=window_create();
   s_custom_fonts[0]=fonts_load_custom_font(resource_get_handle(RESOURCE_ID_CORMORANT_54));

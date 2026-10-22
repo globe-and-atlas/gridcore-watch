@@ -22,6 +22,7 @@ assert.equal(old.SETTING_DAY_START, 7);
 assert.equal(old.SETTING_DECORATION, 0);
 assert.equal(old.SETTING_FONT, 0);
 assert.equal(old.SETTING_BACKGROUND, 0);
+assert.equal(old.SETTING_ECHOES, 3);
 
 const custom = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 1,
@@ -33,7 +34,8 @@ const custom = settings.settingsMessage(JSON.stringify({
   SETTING_NIGHT_GRID: 0x111111,
   SETTING_DECORATION: 5,
   SETTING_FONT: 11,
-  SETTING_BACKGROUND: 10
+  SETTING_BACKGROUND: 10,
+  SETTING_ECHOES: 12
 }));
 assert.equal(custom.SETTING_MODE, 1);
 assert.equal(custom.SETTING_NIGHT_START, 22);
@@ -45,6 +47,7 @@ assert.equal(custom.SETTING_NIGHT_GRID, 0x111111);
 assert.equal(custom.SETTING_DECORATION, 5);
 assert.equal(custom.SETTING_FONT, 11);
 assert.equal(custom.SETTING_BACKGROUND, 10);
+assert.equal(custom.SETTING_ECHOES, 12);
 
 const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_MODE: 3,
@@ -53,7 +56,8 @@ const invalid = settings.settingsMessage(JSON.stringify({
   SETTING_NIGHT_BG: -1,
   SETTING_DECORATION: 8,
   SETTING_FONT: 12,
-  SETTING_BACKGROUND: 12
+  SETTING_BACKGROUND: 12,
+  SETTING_ECHOES: 13
 }));
 assert.equal(invalid.SETTING_MODE, 2);
 assert.equal(invalid.SETTING_NIGHT_START, 19);
@@ -62,6 +66,7 @@ assert.equal(invalid.SETTING_NIGHT_BG, 0);
 assert.equal(invalid.SETTING_DECORATION, 0);
 assert.equal(invalid.SETTING_FONT, 0);
 assert.equal(invalid.SETTING_BACKGROUND, 0);
+assert.equal(invalid.SETTING_ECHOES, 3);
 
 const config = settings.configuration();
 const keys = new Set(config.map(function (item) { return item.messageKey; }).filter(Boolean));
@@ -69,4 +74,5 @@ for (const key of Object.keys(custom)) assert(keys.has(key), `missing Clay contr
 assert.equal(config.find((item) => item.messageKey === 'SETTING_DECORATION').options.length, 8);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_FONT').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_BACKGROUND').options.length, 12);
+assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHOES').options.length, 12);
 console.log('PASS: Gridcore settings defaults, migration, validation, and controls');
