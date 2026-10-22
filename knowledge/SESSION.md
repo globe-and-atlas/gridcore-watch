@@ -63,3 +63,4 @@
 - 2026-10-22 15:26 — commit: Add reversible echoes and Way Back store media | README.md,execution/capture_store_media.py,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md
 - 2026-10-22 15:43 — commit: Keep Way Back foreground fixed during echo reversal | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/FAILURES/2026-10-22_foreground_jump/context.md
 - 2026-10-22 16:01 — commit: Make Way Back echoes orbit through store previews | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
+- 2026-10-22 16:50 — commit: Record Way Back Pebble store release | README.md,knowledge/INDEX.md,knowledge/SESSION.md,knowledge/procedural/build_and_check.md,task.md
