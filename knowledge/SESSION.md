@@ -6,7 +6,7 @@
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** none
 **Handoff-type:** new-project
-**Status:** Local implementation committed and independently verified. Store listing not created.
+**Status:** Tilt parallax complete in a local dual-platform PBW; independent verification passed. Store listing not created.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,10 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Tilt scope: prior build only had a tap or raise reveal, with no continuous angle tracking or changing shade. Add opt-in live x/y parallax, stepped color bands, native tilt captures, and fresh verification.
+- 2026-10-22 10:18 - Tilt implementation: accelerometer x/y filtered into bounded depth shifts; three shade bands reorder with angle. Deterministic 2:15 fixtures were captured on Emery and Gabbro. Production PBW rebuilt and bundle verifier passed. On Emery, live gravity+x versus gravity-x changed the digit region with motion on; the same region was pixel-identical with motion off. Physical-watch battery and motion feel remain unchecked.
+- 2026-10-22 10:25 - Fresh review caught depth strokes crossing foreground pixels. Switched to depth-first and foreground-second rendering for the whole clock, and corrected vertical shade ordering in Color Slices. New native left/right captures on both watches and up/down captures on Emery show fixed white foreground masks with changing depth pixels. Final production PBW rebuilt and checked. Independent follow-up is pending.
+- 2026-10-22 10:30 - Added 50 mG hysteresis around tilt positions to prevent boundary chatter. Final production PBW and JavaScript syntax checks pass. Live Emery gravity reversal changes the digit region. Fresh verifier checked the renderer, fixture pixels, bundle, and hysteresis indexing with no blocking findings. Physical-watch motion feel and battery impact remain untested; RePebble listing remains unpublished.
 - 2026-10-19 22:12 - Scaffold and contract: created project from workflow-python template; set dual-platform and settings validation criteria in task.md and directives/build_watchface.md. Next: implement native watchface.
 - 2026-10-22 - Build: `npm ci` and `pebble build` passed; the PBW contains Emery and Gabbro binaries. Native capture remains pending after the Emery emulator did not boot within two minutes.
 - 2026-10-22 - Native QA: emulator recovered after backup and wipe; both platform captures reviewed. Date Off, US order, EU order, custom teal persistence, four colored looks, Graphite, 12-hour, 24-hour, and tap settling were checked. Final production PBW rebuilt and verified.

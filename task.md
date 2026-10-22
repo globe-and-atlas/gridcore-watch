@@ -45,3 +45,17 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] Capture both native emulators.
 - [x] Run independent verification.
 - [x] Promote procedural knowledge.
+
+## Tilt parallax update — 2026-10-22
+
+- [x] Motion Off leaves the clock static when accelerometer samples arrive.
+- [x] Motion On shifts only the digit depth in response to horizontal wrist tilt.
+- [x] Motion On shifts only the digit depth in response to vertical wrist tilt.
+- [x] Motion On changes the depth shade order in response to wrist tilt.
+- [x] The foreground digit silhouette remains fixed during tilt.
+- [x] A steady tilt stops triggering redraws.
+- [x] The tilt effect stays inside the Emery screen.
+- [x] The tilt effect stays inside the Gabbro circle.
+- [x] A tap reveal returns to the current tilt pose within three seconds.
+- [x] The production PBW contains Emery and Gabbro binaries.
+- [x] A fresh verifier reviews the tilt implementation and native captures.

@@ -18,19 +18,41 @@ static Layer *s_layer;
 static AppTimer *s_reveal_timer;
 static int s_look = 0;  // Color Slices
 static int s_date = 1;  // YYYY-MM-DD
-static int s_motion = 0;
+static int s_motion = 1;
 static int s_bg = 0x0A1020;
 static int s_front = 0xF4F4DB;
 static int s_depth = 0x49B8D0;
 static int s_grid = 0x273759;
 static int s_phase = 4;
 static int s_tilt = 0;
+static int s_angle_x;
+static int s_angle_y;
+static int32_t s_filtered_x;
+static int32_t s_filtered_y;
+static bool s_filter_ready;
 static bool s_raise_armed;
 static bool s_accel_subscribed;
 static time_t s_last_reveal;
 
 static int clamp(int value, int lo, int hi) {
   return value < lo ? lo : (value > hi ? hi : value);
+}
+
+static int mix_hex(int a, int b, int parts_a) {
+  int result=0;
+  for (int shift=0;shift<=16;shift+=8) {
+    int channel=(((a>>shift)&0xFF)*parts_a+((b>>shift)&0xFF)*(4-parts_a))/4;
+    result|=channel<<shift;
+  }
+  return result;
+}
+
+static int angle_step(int32_t milligravity, int current) {
+  static const int boundaries[6]={-650,-420,-170,170,420,650};
+  // Each boundary has 50 mG of hysteresis on both sides.
+  while (current<3 && milligravity>=boundaries[current+3]+50) current++;
+  while (current>-3 && milligravity<=boundaries[current+2]-50) current--;
+  return current;
 }
 
 static Palette palette(void) {
@@ -50,7 +72,9 @@ static Palette palette(void) {
     middle=0x555555; accent=0xFFFFFF; grid=0x444444;
   } else if (s_look == 5) {
     bg=s_bg; front=s_front; depth=s_depth;
-    middle=s_depth; accent=s_front; grid=s_grid;
+    middle=mix_hex(s_front,s_depth,2);
+    accent=mix_hex(s_front,s_depth,3);
+    grid=s_grid;
   }
   return (Palette){GColorFromHEX(bg), GColorFromHEX(front),
                    GColorFromHEX(depth), GColorFromHEX(middle),
@@ -134,23 +158,56 @@ static void grid(GContext *ctx, GRect bounds, Palette p) {
   }
 }
 
-static void prism(GContext *ctx, GRect bounds, Rect r, Palette p) {
+static void prism(GContext *ctx, GRect bounds, Rect r, Palette p,
+                  bool front_pass) {
+  if (front_pass) {
+    fill_chamfered_segment(ctx,bounds,r,p.front);
+    if (s_look==1 || s_look==3 || s_look==4) {
+      if (r.w>r.h) {
+        for (int x=r.x+8;x<r.x+r.w-4;x+=8)
+          line(ctx,bounds,x,r.y+1,x,r.y+r.h-1,p.depth,1);
+      } else {
+        for (int y=r.y+8;y<r.y+r.h-4;y+=8)
+          line(ctx,bounds,r.x+1,y,r.x+r.w-1,y,p.depth,1);
+      }
+    }
+    return;
+  }
   int base=s_look==2?-7:9;
-  int dx=(base*s_phase)/4 + s_tilt;
-  int dy=((s_look==2?7:-9)*s_phase)/4;
+  int dx=(base*s_phase)/4 + s_tilt + s_angle_x;
+  int dy=((s_look==2?7:-9)*s_phase)/4 + s_angle_y;
   Rect rear={r.x+dx,r.y+dy,r.w,r.h};
+  GColor top_shades[3]={p.accent,p.middle,p.depth};
+  GColor side_shades[3]={p.depth,p.middle,p.accent};
+  if (s_angle_y>0) {
+    top_shades[0]=p.depth;
+    top_shades[2]=p.accent;
+  }
+  if (s_angle_x<0) {
+    side_shades[0]=p.accent;
+    side_shades[2]=p.depth;
+  }
   if (s_look==0) {
-    outline(ctx,bounds,rear,p.depth,1);
+    int ax=s_angle_x<0?-s_angle_x:s_angle_x;
+    int ay=s_angle_y<0?-s_angle_y:s_angle_y;
+    GColor *slice_shades=ay>ax?top_shades:side_shades;
+    for (int i=1;i<=3;i++) {
+      Rect slice={r.x+dx*i/3,r.y+dy*i/3,r.w,r.h};
+      outline(ctx,bounds,slice,slice_shades[i-1],1);
+    }
     line(ctx,bounds,r.x,r.y,r.x+dx,r.y+dy,p.accent,1);
     line(ctx,bounds,r.x+r.w,r.y,r.x+r.w+dx,r.y+dy,p.middle,1);
-    line(ctx,bounds,r.x+r.w,r.y+r.h,r.x+r.w+dx,r.y+r.h+dy,p.middle,1);
   } else {
     fill_rect(ctx,bounds,rear,p.middle);
     outline(ctx,bounds,rear,p.depth,1);
-    fill_quad(ctx,bounds,r.x,r.y,r.x+r.w,r.y,
-              r.x+r.w+dx,r.y+dy,r.x+dx,r.y+dy,p.middle);
-    fill_quad(ctx,bounds,r.x+r.w,r.y,r.x+r.w,r.y+r.h,
-              r.x+r.w+dx,r.y+r.h+dy,r.x+r.w+dx,r.y+dy,p.depth);
+    for (int i=0;i<3;i++) {
+      int ax=dx*i/3, ay=dy*i/3;
+      int bx=dx*(i+1)/3, by=dy*(i+1)/3;
+      fill_quad(ctx,bounds,r.x+ax,r.y+ay,r.x+r.w+ax,r.y+ay,
+                r.x+r.w+bx,r.y+by,r.x+bx,r.y+by,top_shades[i]);
+      fill_quad(ctx,bounds,r.x+r.w+ax,r.y+ay,r.x+r.w+ax,r.y+r.h+ay,
+                r.x+r.w+bx,r.y+r.h+by,r.x+r.w+bx,r.y+by,side_shades[i]);
+    }
     fill_quad(ctx,bounds,r.x,r.y+r.h,r.x+r.w,r.y+r.h,
               r.x+r.w+dx,r.y+r.h+dy,r.x+dx,r.y+r.h+dy,p.middle);
     fill_quad(ctx,bounds,r.x,r.y,r.x,r.y+r.h,
@@ -161,19 +218,10 @@ static void prism(GContext *ctx, GRect bounds, Rect r, Palette p) {
       line(ctx,bounds,x,y,x+dx,y+dy,p.depth,1);
     }
   }
-  fill_chamfered_segment(ctx,bounds,r,p.front);
-  if (s_look==1 || s_look==3 || s_look==4) {
-    if (r.w>r.h) {
-      for (int x=r.x+8;x<r.x+r.w-4;x+=8)
-        line(ctx,bounds,x,r.y+1,x,r.y+r.h-1,p.depth,1);
-    } else {
-      for (int y=r.y+8;y<r.y+r.h-4;y+=8)
-        line(ctx,bounds,r.x+1,y,r.x+r.w-1,y,p.depth,1);
-    }
-  }
 }
 
-static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h) {
+static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h,
+                  bool front_pass) {
   static const uint8_t bits[10]={63,6,91,79,102,109,125,7,127,111};
   if (value<0 || value>9) return;
   Palette p=palette();
@@ -187,10 +235,12 @@ static void digit(GContext *ctx,GRect bounds,int value,int x,int y,int w,int h) 
     {x,y+t+2,t,h/2-t/2-t-4},
     {x+t/2,y+h/2-t/2,w-t,t}
   };
-  for (int i=0;i<7;i++) if (bits[value]&(1<<i)) prism(ctx,bounds,seg[i],p);
+  for (int i=0;i<7;i++) if (bits[value]&(1<<i))
+    prism(ctx,bounds,seg[i],p,front_pass);
 }
 
-static void draw_time(GContext *ctx,GRect bounds,struct tm *local) {
+static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
+                      bool front_pass) {
   int hour=local->tm_hour;
   if (!clock_is_24h_style()) hour=hour%12?hour%12:12;
   int two_hours=hour>=10;
@@ -201,17 +251,17 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local) {
   int x=(200-total)/2;
   int y=62;
   int h=94;
-  if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h); x+=w+gap; }
-  digit(ctx,bounds,hour%10,x,y,w,h);
+  if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h,front_pass); x+=w+gap; }
+  digit(ctx,bounds,hour%10,x,y,w,h,front_pass);
   x+=w;
   Palette p=palette();
   Rect upper={x+colon_gap/2-3,y+31,6,6};
   Rect lower={x+colon_gap/2-3,y+60,6,6};
-  prism(ctx,bounds,upper,p); prism(ctx,bounds,lower,p);
+  prism(ctx,bounds,upper,p,front_pass); prism(ctx,bounds,lower,p,front_pass);
   x+=colon_gap;
-  digit(ctx,bounds,local->tm_min/10,x,y,w,h);
+  digit(ctx,bounds,local->tm_min/10,x,y,w,h,front_pass);
   x+=w+gap;
-  digit(ctx,bounds,local->tm_min%10,x,y,w,h);
+  digit(ctx,bounds,local->tm_min%10,x,y,w,h,front_pass);
 }
 
 static void draw_date(GContext *ctx,GRect bounds,struct tm *local,Palette p) {
@@ -240,7 +290,8 @@ static void redraw(Layer *layer,GContext *ctx) {
   fixture.tm_min=GRIDCORE_MINUTE;
   local=&fixture;
 #endif
-  draw_time(ctx,bounds,local);
+  draw_time(ctx,bounds,local,false);
+  draw_time(ctx,bounds,local,true);
   draw_date(ctx,bounds,local,p);
 }
 
@@ -273,21 +324,45 @@ static void tap_handler(AccelAxisType axis,int32_t direction) {
 }
 
 static void accel_handler(AccelData *data,uint32_t count) {
+  int32_t sum_x=0, sum_y=0;
+  uint32_t samples=0;
   for (uint32_t i=0;i<count;i++) {
     if (data[i].did_vibrate) continue;
+    sum_x+=data[i].x;
+    sum_y+=data[i].y;
+    samples++;
     if (data[i].z>=-250) s_raise_armed=true;
     else if (data[i].z<=-600 && s_raise_armed) {
       s_raise_armed=false;
       start_reveal(data[i].x/350);
     }
   }
+  if (!samples) return;
+  int32_t avg_x=sum_x/(int32_t)samples;
+  int32_t avg_y=sum_y/(int32_t)samples;
+  if (!s_filter_ready) {
+    s_filtered_x=avg_x;
+    s_filtered_y=avg_y;
+    s_filter_ready=true;
+  } else {
+    s_filtered_x=(3*s_filtered_x+avg_x)/4;
+    s_filtered_y=(3*s_filtered_y+avg_y)/4;
+  }
+  int new_x=angle_step(s_filtered_x,s_angle_x);
+  int new_y=angle_step(-s_filtered_y,s_angle_y);
+  if (new_x!=s_angle_x || new_y!=s_angle_y) {
+    s_angle_x=new_x;
+    s_angle_y=new_y;
+    layer_mark_dirty(s_layer);
+  }
 }
 
 static void update_motion_subscription(void) {
   if (s_motion && !s_accel_subscribed) {
     s_raise_armed=false;
+    s_filter_ready=false;
     accel_tap_service_subscribe(tap_handler);
-    accel_data_service_subscribe(10,accel_handler);
+    accel_data_service_subscribe(5,accel_handler);
     accel_service_set_sampling_rate(ACCEL_SAMPLING_10HZ);
     s_accel_subscribed=true;
   } else if (!s_motion && s_accel_subscribed) {
@@ -298,6 +373,9 @@ static void update_motion_subscription(void) {
     s_reveal_timer=NULL;
     s_phase=4;
     s_tilt=0;
+    s_angle_x=0;
+    s_angle_y=0;
+    s_filter_ready=false;
   }
 }
 
@@ -362,6 +440,8 @@ int main(void) {
   s_look=GRIDCORE_LOOK;
   s_date=GRIDCORE_DATE;
   s_motion=0;
+  s_angle_x=clamp(GRIDCORE_ANGLE_X,-3,3);
+  s_angle_y=clamp(GRIDCORE_ANGLE_Y,-3,3);
 #endif
   s_window=window_create();
   window_set_window_handlers(s_window,(WindowHandlers){.load=load,.unload=unload});
