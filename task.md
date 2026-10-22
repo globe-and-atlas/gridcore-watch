@@ -189,7 +189,7 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [ ] Upload the production PBW to the Pebble Developer Dashboard.
 - [ ] Confirm the saved Emery media in the dashboard.
 - [ ] Confirm the saved Gabbro media in the dashboard.
-- [ ] Confirm the public listing serves version 0.6.0 to both targets.
+- [ ] Confirm the public listing serves version 0.6.1 to both targets.
 
 ## Way Back product rename — 2026-10-22
 
@@ -225,3 +225,14 @@ timestamp: "2026-10-19T22:11:00-05:00"
 - [x] Gabbro has four selected still screenshots from the GIF compositions.
 - [x] Each final screenshot retains legible time and date at native resolution.
 - [x] A fresh verifier reviews the final media.
+
+## Fixed foreground during echo transitions — 2026-10-22
+
+- [x] Foreground numeral coordinates are independent of echo direction.
+- [x] Foreground numeral coordinates are independent of wrist tilt.
+- [x] Echoes move to opposite sides at the same simulated tilt when direction changes.
+- [x] Matched GIF frames retain the same foreground pixel mask.
+- [x] Emery store media uses the corrected renderer.
+- [x] Gabbro store media uses the corrected renderer.
+- [x] The final production PBW passes the dual-target verifier.
+- [x] A fresh verifier reviews the corrected animation.

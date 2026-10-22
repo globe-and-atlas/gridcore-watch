@@ -2,11 +2,11 @@
 
 ## Current Session
 
-**Goal:** Add reversible echo direction and native store media for Way Back.
+**Goal:** Keep Way Back's foreground time fixed while the echo direction reverses, then replace the store media.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
 **Handoff-from:** OpenAI Codex
 **Handoff-type:** continuation
-**Status:** Way Back 0.6.0 is built and independently verified for Emery and Gabbro. Both direction choices and two GIFs plus eight stills are complete. Store listing not created; no physical-watch test.
+**Status:** Way Back 0.6.1 is built and independently verified for Emery and Gabbro. Both store GIFs and eight stills use a fixed foreground. Store listing not created; no physical-watch test.
 
 ## Handoff — 2026-10-22 10:02
 - **Completed**: Chamfered segmented font, six looks, four custom colors, four date choices, optional motion, dual-platform PBW, native Emery and Gabbro captures. Selected complete frames were copied to `media/`.
@@ -17,6 +17,7 @@
 
 ---
 ## Checkpoints
+- 2026-10-22 - Fixed foreground after user caught a jump in the direction GIF. Removed direction-dependent depth bias from segmented and text numeral origins; echoes alone use the reverse and live tilt offsets. Regenerated both native GIFs and eight stills. Every paired PNG and decoded GIF frame retained an identical foreground numeral mask; echo pixels changed by thousands. Live Gabbro opposite-tilt captures changed 3,521 pixels with zero foreground-mask differences. Clean production v0.6.1 PBW, bundle verifier, settings test, JS syntax, Python smoke test, diff check, and fresh independent review passed. Physical-watch checks and RePebble upload remain open.
 - 2026-10-22 - Reversible echo direction and store media final: persisted reverse setting defaults off and flips static depth plus wrist tilt offsets. Native Emery/Gabbro fixture captures show five matched forward/reverse pairs at fixed 13:48 and upward tilt. Reduced echo counts for amber wireframe and graphite serif after contact-sheet review. Final GIFs are 10 frames at 200×228 (31,466 bytes) and 260×260 (37,090 bytes); four stills per target complete each five-slot asset set. Live Gabbro accelerometer check showed opposite directions, and a Gabbro reinstall retained the reverse choice. Clean production v0.6.0 PBW, bundle verifier, settings test, JS syntax, Python smoke test, media checks, diff check, and fresh independent review pass. Physical-watch battery and store publication remain open.
 - 2026-10-22 - Renamed product metadata and Clay settings title to Way Back while retaining UUID `2062ace2-4528-4975-95b6-fc2cbf11de0d`. Clean production v0.5.1 build contains Emery and Gabbro. Bundle verifier, settings test, JS syntax, Python smoke test, and diff check pass. Fresh independent review confirmed package identity and release copy. Publishing and physical-watch validation remain open.
 - 2026-10-22 - Centering and echoes final: default 13:48 and 23:48 full-ink centers measured at x=100.5 on Emery and x=130.5 on Gabbro. Echo 1, 3, 12 and Bodoni 12 captured natively; 12-layer palette subdued after first crowded iteration. The 12-echo setting survived a production PBW reinstall. A transitional media capture and invalid persisted-value fallback were corrected during fresh review. Final 0.5.0 dual-target PBW (713301 bytes), settings test, smoke test, JS syntax, diff check, and independent recheck passed. Physical-watch motion/battery and store media GIF remain open.

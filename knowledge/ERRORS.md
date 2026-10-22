@@ -28,3 +28,10 @@ Record deterministic errors, root causes, and fixes here.
 - Cause: the old Tunnel grid color `0x392B23` quantized to the same Pebble palette value as its near-black background.
 - Fix: change the Tunnel grid color to `0x5A3A1B`, which is visibly distinct on the device palette.
 - Graduated-to: color quantization must be checked on native screenshots when adding patterns to an existing look.
+
+# 2026-10-22 — Foreground jumped when echo direction flipped
+
+- Symptom: the main time appeared to shift between paired forward/reverse GIF frames even though the user expected only the echoes to move.
+- Cause: both segmented and text layout subtracted half of a direction-dependent echo base from the foreground origin. Reversing the trail therefore also reversed the foreground offset.
+- Fix: center the foreground independently of echo depth and direction. Keep direction multiplication inside the echo offset alone.
+- Graduated-to: `execution/capture_store_media.py` rejects paired frames when the foreground numeral pixel mask changes.

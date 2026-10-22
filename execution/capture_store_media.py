@@ -20,6 +20,13 @@ WATCHFACE = ROOT / "watchface"
 CAPTURES = ROOT / ".tmp" / "store-media"
 MEDIA = ROOT / "media"
 SIZES = {"emery": (200, 228), "gabbro": (260, 260)}
+FRONT_COLORS = {
+    "color-slices": (255, 255, 255),
+    "amber-mesh": (255, 255, 170),
+    "daylight-dots": (0, 0, 85),
+    "graphite-rings": (255, 255, 255),
+    "green-stars": (255, 255, 255),
+}
 
 # Each pair uses the same fixed 13:48 time and simulated upward wrist angle.
 # Direction 0/1 is the only difference within a pair.
@@ -67,6 +74,18 @@ def has_complete_date(path: Path, look: int, platform: str) -> bool:
         return ink > 90
 
 
+def foreground_mask(image: Image.Image, color: tuple[int, int, int]) -> set[tuple[int, int]]:
+    pixels = image.load()
+    width, height = image.size
+    # Exclude edge decorations, which can be occluded by a moving trail.
+    return {
+        (x, y)
+        for y in range(int(height * 0.25), int(height * 0.74))
+        for x in range(int(width * 0.22), int(width * 0.78))
+        if pixels[x, y] == color
+    }
+
+
 def capture(platform: str) -> None:
     CAPTURES.mkdir(parents=True, exist_ok=True)
     message_keys = json.loads((WATCHFACE / "build" / "js" / "message_keys.json").read_text())
@@ -104,6 +123,10 @@ def compose(platform: str) -> None:
         changed_pixels = changed.width * changed.height - changed.convert("L").histogram()[0]
         if changed_pixels < 200:
             raise ValueError(f"Direction change is not visible: {platform}-{name}: {changed_pixels} pixels")
+        first_front = foreground_mask(pair[0], FRONT_COLORS[name])
+        second_front = foreground_mask(pair[1], FRONT_COLORS[name])
+        if len(first_front) < 100 or first_front != second_front:
+            raise ValueError(f"Foreground moved across direction pair: {platform}-{name}")
         print(f"{platform}-{name}: {changed_pixels} changed pixels across direction pair")
 
     gif = MEDIA / f"way-back-{platform}-options.gif"
@@ -113,6 +136,16 @@ def compose(platform: str) -> None:
     )
     if gif.stat().st_size >= 4_400_000:
         raise ValueError(f"GIF exceeds 4.4 MB: {gif.stat().st_size}")
+    with Image.open(gif) as encoded:
+        if encoded.n_frames != len(frames):
+            raise ValueError(f"GIF lost frames: {gif}")
+        for index, (name, _) in enumerate(COMPOSITIONS):
+            encoded.seek(index * 2)
+            forward = encoded.convert("RGB")
+            encoded.seek(index * 2 + 1)
+            reverse = encoded.convert("RGB")
+            if foreground_mask(forward, FRONT_COLORS[name]) != foreground_mask(reverse, FRONT_COLORS[name]):
+                raise ValueError(f"Encoded GIF shifted foreground: {platform}-{name}")
     print(f"Saved {gif.name}: {gif.stat().st_size} bytes")
 
     # Four stills plus the GIF fill the five listing slots for each platform.

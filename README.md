@@ -20,7 +20,7 @@ The `media/` folder includes native day and night captures for both watch shapes
 
 ## Store media
 
-The animated previews hold the time and simulated wrist angle at 13:48 while each pair flips the echo direction. Across five pairs they show segmented, wire, digital, serif, and geometric numerals; blue, amber, daylight, grayscale, and green palettes; and five background patterns.
+The animated previews hold the time and simulated wrist angle at 13:48 while each pair flips the echo direction. The foreground digits remain in exactly the same position within each pair. Across five pairs they show segmented, wire, digital, serif, and geometric numerals; blue, amber, daylight, grayscale, and green palettes; and five background patterns.
 
 ![Way Back options on Pebble Time 2](media/way-back-emery-options.gif)
 ![Way Back options on Pebble Round 2](media/way-back-gabbro-options.gif)
@@ -55,9 +55,9 @@ Matching Round 2 captures use the `gabbro-background-*.png` names. Additional Em
 
 The `media/` folder also contains Graphite and custom teal captures from the Emery emulator.
 
-## Current look renders
+## Earlier look studies
 
-These native captures use the centered 13:48 layout and the default three echoes. Custom green demonstrates a color combination beyond the built-in looks.
+These earlier native captures show the six looks at 13:48 with the default three echoes. They predate the fixed-foreground correction; the store media above shows the current layout. Custom green demonstrates a color combination beyond the built-in looks.
 
 | Look | Pebble Time 2 | Pebble Round 2 |
 |---|---|---|
@@ -107,4 +107,4 @@ The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator b
 
 ## Release state
 
-Version 0.6.0 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.
+Version 0.6.1 is a local dual-platform build. It has not been uploaded to the Pebble/RePebble store and has not been tested on physical watches.

@@ -1,7 +1,7 @@
 {
   "name": "way-back-watch",
   "author": "Daniel Bally",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "private": true,
   "keywords": ["pebble-app"],
   "pebble": {

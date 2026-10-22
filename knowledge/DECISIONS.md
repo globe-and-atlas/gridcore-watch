@@ -43,7 +43,7 @@
 
 ## 2026-10-22 — Visible clock centering and selectable echoes
 
-- Center the visible clock, including its nominal extrusion, instead of only centering equal-width digit cells. Account for the narrow `1` at either end of the time. Keep tilt motion separate from this fixed layout offset so the foreground never shifts with the wrist.
+- Historical choice: center the visible clock, including its nominal extrusion, instead of only centering equal-width digit cells. Account for the narrow `1` at either end of the time. The depth-dependent part of this choice was superseded by the fixed-foreground decision below.
 - Offer 1–12 echoes, defaulting to three for existing installations. Grow the maximum reach gradually to 21 pixels at twelve echoes, and use progressively quieter colors for distant layers above three echoes. Preserve a fixed foreground for both segmented and text numeral styles.
 
 ## 2026-10-22 — Product name
@@ -52,5 +52,9 @@
 
 ## 2026-10-22 — Echo direction and store media
 
-- Add a persisted reverse echo direction toggle, off by default. Multiply both the static depth and wrist-driven offsets by the selected direction, then recenter the whole time group so either trail orientation fits the screen. The foreground remains fixed while the wrist moves.
+- Add a persisted reverse echo direction toggle, off by default. Multiply both the static depth and wrist-driven offsets by the selected direction. The original depth-dependent group recentering was superseded by the fixed-foreground decision below.
 - Use native fixed-time emulator captures for store media. Pair normal and reversed trails at the same simulated wrist angle, then vary numeral style, palette, and background between pairs. Keep the GIFs at native target resolution so every frame represents the watch renderer.
+
+## 2026-10-22 — Fixed foreground during direction changes
+
+- Center the foreground numerals without a depth offset. Reverse direction changes only the echo vector, so the front has the same pixels in paired frames. Keep optical compensation for a narrow `1`. Check identical front-color pixel masks across every matched store-media pair before accepting GIFs.

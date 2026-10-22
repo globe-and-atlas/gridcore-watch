@@ -427,7 +427,8 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
     GPoint offset=echo_offset();
     int dx=offset.x;
     int dy=offset.y;
-    GPoint origin=point(bounds,-echo_base()/2,y);
+    // Center the front independently of the trail so direction never nudges time.
+    GPoint origin=point(bounds,0,y);
     if (front_pass) {
       graphics_context_set_text_color(ctx,p.front);
       graphics_draw_text(ctx,label,font,GRect(origin.x,origin.y,200,96),
@@ -455,8 +456,7 @@ static void draw_time(GContext *ctx,GRect bounds,struct tm *local,
   int one_inset=(w-stroke)/2;
   int left_blank=first_digit==1?one_inset:0;
   int right_blank=last_digit==1?w-one_inset-stroke:0;
-  int depth_bias=echo_base()/2;
-  int x=(200-total-left_blank+right_blank)/2-depth_bias;
+  int x=(200-total-left_blank+right_blank)/2;
   int y=62;
   int h=94;
   if (two_hours) { digit(ctx,bounds,hour/10,x,y,w,h,p,front_pass); x+=w+gap; }
