@@ -4,6 +4,34 @@ timestamp: "2026-10-19T22:11:00-05:00"
 ---
 # Way Back watchface
 
+## 0.8.0 motion polish — 2026-10-27
+
+- Quick orbit uses 90 ms per step.
+- Classic orbit uses 180 ms per step.
+- Slow orbit uses 300 ms per step.
+- Gentle gestures trigger at a lower motion threshold than Deliberate.
+- New installs use Classic speed.
+- New installs use Deliberate sensitivity.
+- Speed persists after restart.
+- Sensitivity persists after restart.
+- A successful Save requests one preview.
+- Cancel does not request a preview.
+- Startup synchronization does not request a preview.
+- Orbit-mode preview replaces a running orbit.
+- None preview remains static.
+- Follow tilt preview does not start an orbit.
+- Foreground digits stay fixed during orbit.
+- Both target GIFs hold a static view before an orbit.
+- Both target GIFs hold a settled view after an orbit.
+- The PBW contains Emery and Gabbro binaries.
+- A fresh verifier reviews the final release.
+
+- [x] Implement controls and Save preview.
+- [x] Verify settings and native behavior.
+- [x] Refresh the two platform GIFs.
+- [x] Complete fresh review.
+- [x] Publish and verify release assets.
+
 ## Three motion choices — 2026-10-22
 
 - [x] Settings offer None.

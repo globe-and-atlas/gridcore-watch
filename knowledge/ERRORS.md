@@ -49,3 +49,7 @@ Record deterministic errors, root causes, and fixes here.
 - Cause: the dashboard's combined mutation failed; the exact server cause is unknown.
 - Fix: save screenshot removal separately, reopen the editor, upload replacement files, then save again. Confirm the public gallery and compare the saved GIF with the local file.
 - Graduated-to: use separate saves for gallery removal and upload in the release procedure.
+
+## 2026-10-27 — Private emulator showed stale app after successful bridge install
+
+The SDK bridge reported a successful Way Back install while isolated Emery still showed a T9 crash screen. The install result alone did not establish the active face. Dismissed the stale crash with Back, stopped only that private bridge, and installed the production PBW directly with `pebble install --qemu localhost:<private-port> --force build/watchface.pbw`. Native screenshot then showed Way Back and all motion checks passed. Always inspect the actual face before accepting an install as evidence. Graduated to: `procedural/build_and_check.md` screenshot verification rule.

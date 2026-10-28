@@ -3,10 +3,20 @@ const assert = require('node:assert/strict');
 const clayId = require.resolve('@rebble/clay');
 require.cache[clayId] = {
   id: clayId, filename: clayId, loaded: true,
-  exports: class Clay {}
+  exports: class Clay {
+    generateUrl() { return 'way-back-settings'; }
+    getSettings(response) { const values = JSON.parse(decodeURIComponent(response)); stored = JSON.stringify(values); return values; }
+  }
 };
-global.Pebble = {addEventListener: function () {}};
-global.localStorage = {getItem: function () { return null; }};
+let stored = null;
+const events = {}, sent = [];
+let opened;
+global.Pebble = {
+  addEventListener: (name, handler) => { events[name] = handler; },
+  sendAppMessage: message => { sent.push(message); },
+  openURL: url => { opened = url; }
+};
+global.localStorage = {getItem: () => stored, setItem: (key, value) => { stored = value; }};
 
 const settings = require('../src/pkjs/index.js');
 const old = settings.settingsMessage(JSON.stringify({
@@ -107,3 +117,34 @@ assert.equal(config.find((item) => item.messageKey === 'SETTING_BACKGROUND').opt
 assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHOES').options.length, 12);
 assert.equal(config.find((item) => item.messageKey === 'SETTING_ECHO_REVERSE').defaultValue, false);
 console.log('PASS: Way Back settings defaults, migration, validation, and controls');
+
+assert.equal(old.SETTING_ORBIT_SPEED, 1);
+assert.equal(old.SETTING_SENSITIVITY, 1);
+for (const speed of [0, 1, 2]) {
+  for (const sensitivity of [0, 1]) {
+    const value = settings.settingsMessage(JSON.stringify({SETTING_ORBIT_SPEED: String(speed), SETTING_SENSITIVITY: String(sensitivity)}));
+    assert.equal(value.SETTING_ORBIT_SPEED, speed);
+    assert.equal(value.SETTING_SENSITIVITY, sensitivity);
+  }
+}
+assert.equal(settings.settingsMessage(JSON.stringify({SETTING_ORBIT_SPEED: 3})).SETTING_ORBIT_SPEED, 1);
+assert.equal(settings.settingsMessage(JSON.stringify({SETTING_SENSITIVITY: -1})).SETTING_SENSITIVITY, 1);
+events.ready();
+assert.equal(sent.length, 0);
+stored = JSON.stringify({SETTING_ORBIT_SPEED: 2});
+events.ready();
+assert.equal(sent.length, 1);
+assert.equal(sent[0].SETTING_PREVIEW, undefined);
+events.showConfiguration();
+assert.equal(opened, 'way-back-settings');
+for (const event of [null, {}, {response: ''}, {response: 'CANCELLED'}, {response: 'invalid'}]) events.webviewclosed(event);
+assert.equal(sent.length, 1);
+events.webviewclosed({response: encodeURIComponent(JSON.stringify({SETTING_ORBIT_SPEED: '0', SETTING_SENSITIVITY: '0', SETTING_MOTION_MODE: '2'}))});
+assert.equal(sent.length, 2);
+assert.equal(sent[1].SETTING_PREVIEW, 1);
+assert.equal(sent[1].SETTING_ORBIT_SPEED, 0);
+assert.equal(sent[1].SETTING_SENSITIVITY, 0);
+assert.equal(JSON.parse(stored).SETTING_PREVIEW, undefined);
+events.ready();
+assert.equal(sent[2].SETTING_PREVIEW, undefined);
+console.log('PASS: speed, sensitivity, Save preview, Cancel, and startup events');

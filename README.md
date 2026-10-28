@@ -2,7 +2,7 @@
 
 Way Back is a dimensional digital watchface for Pebble Time 2 (Emery) and Pebble Round 2 (Gabbro). Its clock uses colored depth on a measured grid.
 
-The face includes Color Slices, Lift, Tunnel, Daylight Blueprint, Graphite, and a custom color look. Custom mode exposes separate day and night background, digit front, digit depth, and grid colors. Day, Night, and Auto modes are selectable. Auto follows the watch's local time; night starts at 7 p.m. and day starts at 7 a.m. by default, with both hours configurable. The date can be Off, YYYY-MM-DD, MM/DD/YYYY, or DD/MM/YYYY in either mode. It follows the watch's 12-hour or 24-hour preference. Echo movement has three choices: None keeps a static echo, Follow tilt tracks the wrist angle without orbiting, and Full clockwise orbit sends the echoes around the fixed foreground time on a deliberate tilt or tap before settling at the measured tilt. The full orbit remains the default.
+The face includes Color Slices, Lift, Tunnel, Daylight Blueprint, Graphite, and a custom color look. Custom mode exposes separate day and night background, digit front, digit depth, and grid colors. Day, Night, and Auto modes are selectable. Auto follows the watch's local time; night starts at 7 p.m. and day starts at 7 a.m. by default, with both hours configurable. The date can be Off, YYYY-MM-DD, MM/DD/YYYY, or DD/MM/YYYY in either mode. It follows the watch's 12-hour or 24-hour preference. Echo movement has three choices: None keeps a static echo, Follow tilt tracks the wrist angle without orbiting, and Full clockwise orbit sends the echoes around the fixed foreground time on a deliberate tilt or tap before settling at the measured tilt. The full orbit remains the default. Orbit speed offers Quick (0.72 seconds), Classic (1.44 seconds), and Slow (2.4 seconds). Gesture sensitivity offers Gentle or Deliberate; Classic and Deliberate preserve the previous defaults. Saving settings previews one orbit in Full clockwise orbit mode; None stays static and Follow tilt stays wrist-driven.
 
 An echo-count control offers 1 through 12 receding outlines; three remains the default. The reverse toggle flips the echo's direction for a given wrist angle. At rest, the echo keeps its familiar diagonal direction. Twelve time numeral styles include segmented digital treatments, Pebble system faces, Space Grotesk, Cormorant Garamond, Bodoni Moda, and Book Serif. Eight independent decoration settings cover registration corners, short brackets, double brackets, crosshairs, edge ticks, dots, a full frame, and none. The full frame becomes a ring on Round 2. Both settings persist on the watch. The four external font sources are licensed under the SIL Open Font License; source licenses are in `licenses/`. Book Serif uses a subset derivative of Libre Baskerville with a renamed internal font family.
 
@@ -20,7 +20,7 @@ The `media/` folder includes native day and night captures for both watch shapes
 
 ## Store media
 
-The animated previews hold the time at 13:48 while the echo makes a clockwise eight-position circuit around fixed foreground digits. Five cycles show segmented, wire, digital, serif, and geometric numerals; blue, amber, daylight, grayscale, and green palettes; and five background patterns. The grayscale serif cycle shows the None decoration option without corner marks.
+The animated previews hold the time at 13:48 while the echo makes a clockwise eight-position circuit around fixed foreground digits. Three looks show Color Slices, Daylight, and Graphite. Each holds still for 1.8 seconds, performs one Classic orbit, then holds for 2.2 seconds. The full loop lasts 15.78 seconds. Graphite shows the None decoration option without corner marks.
 
 ![Way Back options on Pebble Time 2](media/way-back-emery-options.gif)
 ![Way Back options on Pebble Round 2](media/way-back-gabbro-options.gif)
@@ -107,4 +107,4 @@ The local PBW is `watchface/build/watchface.pbw`. Native captures and emulator b
 
 ## Release state
 
-Version 0.7.2 is published as a Listed watchface on the [Pebble App Store](https://apps.repebble.com/370092d6402c4a0bbc8fb01b). The public listing has Time 2 and Round 2 GIFs and stills, describes the three echo movement choices, and offers the dual-target PBW download. The wearer has not yet checked the 0.7.2 gesture or battery use on a physical watch.
+Version 0.8.0 is published as a Listed watchface on the [Pebble App Store](https://apps.repebble.com/370092d6402c4a0bbc8fb01b). The public listing has Time 2 and Round 2 GIFs and stills, describes the motion choices, orbit speeds, gesture sensitivity, and Save preview, and offers the dual-target PBW download. The wearer has not yet checked the 0.8.0 gesture or battery use on a physical watch.

@@ -76,3 +76,7 @@
 - Expose None, Follow tilt, and Full clockwise orbit as separate settings. None unsubscribes the accelerometer; Follow tilt continuously follows its filtered X/Y angle without starting an orbit; Full clockwise orbit retains the eight-step sweep and then follows the measured angle.
 - Keep Full clockwise orbit as the default. Migrate existing Motion Off to None and Motion On to Full clockwise orbit in both Clay settings and watch persistence.
 - Keep the old message key as a compatibility alias and append a new motion-mode key, preserving all existing AppMessage IDs.
+
+## 2026-10-27 — Motion controls and Save preview
+
+0.8.0 adds Quick 90 ms, Classic 180 ms, and Slow 300 ms orbit steps. Deliberate retains the 360 mG summed-axis trigger; Gentle uses 220. Persist both settings. Save carries an ephemeral preview marker, cancels an active orbit, and restarts only in Full clockwise orbit mode. Startup and Cancel omit the marker. None and Follow tilt keep their existing semantics. Store GIFs use three contrasting native looks with 1.8-second initial and 2.2-second settled holds; stills remain unchanged.

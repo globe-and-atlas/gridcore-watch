@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "motion_policy.h"
 
 #define PERSIST_LOOK 1
 #define PERSIST_DATE 2
@@ -20,6 +21,8 @@
 #define PERSIST_ECHOES 18
 #define PERSIST_ECHO_REVERSE 19
 #define PERSIST_MOTION_MODE 20
+#define PERSIST_ORBIT_SPEED 21
+#define PERSIST_SENSITIVITY 22
 
 #define MOTION_NONE 0
 #define MOTION_TILT 1
@@ -36,6 +39,8 @@ static AppTimer *s_orbit_timer;
 static int s_look = 0;  // Color Slices
 static int s_date = 1;  // YYYY-MM-DD
 static int s_motion_mode = MOTION_ORBIT;
+static int s_orbit_speed = 1;
+static int s_sensitivity = 1;
 static int s_bg = 0x0A1020;
 static int s_front = 0xF4F4DB;
 static int s_depth = 0x49B8D0;
@@ -539,23 +544,25 @@ static void orbit_tick(void *context) {
     s_anchor_z=s_filtered_z;
   }
   layer_mark_dirty(s_layer);
-  if (s_orbit_step>=0) s_orbit_timer=app_timer_register(180,orbit_tick,NULL);
+  if (s_orbit_step>=0) s_orbit_timer=app_timer_register(orbit_step_ms(s_orbit_speed),orbit_tick,NULL);
 }
 
-static void start_orbit(void) {
-  if (s_motion_mode!=MOTION_ORBIT || s_orbit_step>=0) return;
+static void start_orbit(bool preview) {
+  if (s_motion_mode!=MOTION_ORBIT || (!preview && s_orbit_step>=0)) return;
   time_t now=time(NULL);
-  if (s_last_orbit && now-s_last_orbit<2) return;
+  if (!preview && s_last_orbit && now-s_last_orbit<2) return;
+  if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
+  s_orbit_timer=NULL;
   s_last_orbit=now;
   s_orbit_step=0;
   layer_mark_dirty(s_layer);
-  s_orbit_timer=app_timer_register(180,orbit_tick,NULL);
+  s_orbit_timer=app_timer_register(orbit_step_ms(s_orbit_speed),orbit_tick,NULL);
 }
 
 static void tap_handler(AccelAxisType axis,int32_t direction) {
   (void)axis;
   (void)direction;
-  start_orbit();
+  start_orbit(false);
 }
 
 static void accel_handler(AccelData *data,uint32_t count) {
@@ -594,7 +601,7 @@ static void accel_handler(AccelData *data,uint32_t count) {
   }
   int32_t moved=abs(s_filtered_x-s_anchor_x)+
                 abs(s_filtered_y-s_anchor_y)+abs(s_filtered_z-s_anchor_z);
-  if (s_motion_mode==MOTION_ORBIT && moved>=360) start_orbit();
+  if (s_motion_mode==MOTION_ORBIT && moved>=gesture_threshold(s_sensitivity)) start_orbit(false);
 }
 
 static void update_motion_subscription(void) {
@@ -648,6 +655,16 @@ static void inbox(DictionaryIterator *iter,void *context) {
   if (orbit_step && orbit_step->value->int32>=-1 && orbit_step->value->int32<=7)
     s_orbit_step=orbit_step->value->int32;
 #endif
+  Tuple *speed=dict_find(iter,MESSAGE_KEY_SETTING_ORBIT_SPEED);
+  if (speed && (speed->type==TUPLE_INT || speed->type==TUPLE_UINT) && speed->value->int32>=0 && speed->value->int32<=2) {
+    s_orbit_speed=speed->value->int32;
+    persist_write_int(PERSIST_ORBIT_SPEED,s_orbit_speed);
+  }
+  Tuple *sensitivity=dict_find(iter,MESSAGE_KEY_SETTING_SENSITIVITY);
+  if (sensitivity && (sensitivity->type==TUPLE_INT || sensitivity->type==TUPLE_UINT) && sensitivity->value->int32>=0 && sensitivity->value->int32<=1) {
+    s_sensitivity=sensitivity->value->int32;
+    persist_write_int(PERSIST_SENSITIVITY,s_sensitivity);
+  }
   Tuple *look=dict_find(iter,MESSAGE_KEY_SETTING_LOOK);
   if (look && look->value->int32>=0 && look->value->int32<=5) {
     s_look=look->value->int32; persist_write_int(PERSIST_LOOK,s_look);
@@ -723,6 +740,13 @@ static void inbox(DictionaryIterator *iter,void *context) {
   read_color(iter,MESSAGE_KEY_SETTING_NIGHT_FRONT,&s_night_front,PERSIST_NIGHT_FRONT);
   read_color(iter,MESSAGE_KEY_SETTING_NIGHT_DEPTH,&s_night_depth,PERSIST_NIGHT_DEPTH);
   read_color(iter,MESSAGE_KEY_SETTING_NIGHT_GRID,&s_night_grid,PERSIST_NIGHT_GRID);
+  Tuple *preview=dict_find(iter,MESSAGE_KEY_SETTING_PREVIEW);
+  if (preview && (preview->type==TUPLE_INT || preview->type==TUPLE_UINT) && preview->value->int32==1) {
+    if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
+    s_orbit_timer=NULL;
+    s_orbit_step=-1;
+    start_orbit(true);
+  }
   layer_mark_dirty(s_layer);
 }
 
@@ -738,6 +762,10 @@ static void unload(Window *window) {
 }
 
 int main(void) {
+  if (persist_exists(PERSIST_ORBIT_SPEED)) s_orbit_speed=persist_read_int(PERSIST_ORBIT_SPEED);
+  if (persist_exists(PERSIST_SENSITIVITY)) s_sensitivity=persist_read_int(PERSIST_SENSITIVITY);
+  s_orbit_speed=clamp(s_orbit_speed,0,2);
+  s_sensitivity=clamp(s_sensitivity,0,1);
   if (persist_exists(PERSIST_LOOK)) s_look=persist_read_int(PERSIST_LOOK);
   if (persist_exists(PERSIST_DATE)) s_date=persist_read_int(PERSIST_DATE);
   if (persist_exists(PERSIST_MOTION_MODE))
@@ -793,7 +821,7 @@ int main(void) {
   tick_timer_service_subscribe(MINUTE_UNIT,tick);
   update_motion_subscription();
   app_message_register_inbox_received(inbox);
-  app_message_open(256,64);
+  app_message_open(512,64);
   app_event_loop();
   if (s_orbit_timer) app_timer_cancel(s_orbit_timer);
   app_message_deregister_callbacks();

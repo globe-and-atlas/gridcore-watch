@@ -123,7 +123,9 @@ def capture(platform: str, style: str | None = None) -> None:
 def compose(platform: str) -> None:
     MEDIA.mkdir(parents=True, exist_ok=True)
     frames: list[Image.Image] = []
-    for name, _ in COMPOSITIONS:
+    durations: list[int] = []
+    showcase = ("color-slices", "daylight-dots", "graphite-rings")
+    for name in showcase:
         orbit = []
         for index in range(len(ANGLES)):
             source = CAPTURES / f"{platform}-{name}-orbit-{index:02d}.png"
@@ -133,7 +135,6 @@ def compose(platform: str) -> None:
             if image.size != SIZES[platform]:
                 raise ValueError(f"Wrong capture size: {source}: {image.size}")
             orbit.append(image)
-            frames.append(image)
         first_front = foreground_mask(orbit[0], FRONT_COLORS[name])
         if len(first_front) < 100:
             raise ValueError(f"Foreground missing: {platform}-{name}")
@@ -144,11 +145,18 @@ def compose(platform: str) -> None:
                 raise ValueError(f"Orbit step invisible: {platform}-{name}-{index}")
             if foreground_mask(image, FRONT_COLORS[name]) != first_front:
                 raise ValueError(f"Foreground moved during orbit: {platform}-{name}-{index}")
+        # Hold the familiar upper-right resting direction, make one clockwise
+        # circuit, then hold that same readable view again.
+        frames.append(orbit[1])
+        durations.append(1800)
+        for index in (2, 3, 4, 5, 6, 7, 0, 1):
+            frames.append(orbit[index])
+            durations.append(2200 if index == 1 else 180)
         print(f"{platform}-{name}: eight visible orbit positions, fixed front")
 
     gif = MEDIA / f"way-back-{platform}-options.gif"
     frames[0].save(
-        gif, save_all=True, append_images=frames[1:], duration=240,
+        gif, save_all=True, append_images=frames[1:], duration=durations,
         loop=0, optimize=True, disposal=2,
     )
     if gif.stat().st_size >= 4_400_000:
@@ -156,10 +164,10 @@ def compose(platform: str) -> None:
     with Image.open(gif) as encoded:
         if encoded.n_frames != len(frames):
             raise ValueError(f"GIF lost frames: {gif}")
-        for style_index, (name, _) in enumerate(COMPOSITIONS):
+        for style_index, name in enumerate(showcase):
             front = None
-            for angle_index in range(len(ANGLES)):
-                encoded.seek(style_index * len(ANGLES) + angle_index)
+            for angle_index in range(9):
+                encoded.seek(style_index * 9 + angle_index)
                 current = foreground_mask(encoded.convert("RGB"), FRONT_COLORS[name])
                 if front is None:
                     front = current

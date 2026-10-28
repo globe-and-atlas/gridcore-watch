@@ -1,6 +1,8 @@
 var Clay = require('@rebble/clay');
 
 var DEFAULTS = {
+  SETTING_ORBIT_SPEED: 1,
+  SETTING_SENSITIVITY: 1,
   SETTING_LOOK: 0,
   SETTING_DATE: 1,
   SETTING_MOTION: 1,
@@ -51,6 +53,8 @@ function settingsMessage(raw) {
   try { saved = JSON.parse(raw) || {}; } catch (error) { saved = {}; }
   var selectedMotion = motionMode(saved);
   return {
+    SETTING_ORBIT_SPEED: integer(saved.SETTING_ORBIT_SPEED, 0, 2, DEFAULTS.SETTING_ORBIT_SPEED),
+    SETTING_SENSITIVITY: integer(saved.SETTING_SENSITIVITY, 0, 1, DEFAULTS.SETTING_SENSITIVITY),
     SETTING_LOOK: integer(saved.SETTING_LOOK, 0, 5, DEFAULTS.SETTING_LOOK),
     SETTING_DATE: integer(saved.SETTING_DATE, 0, 3, DEFAULTS.SETTING_DATE),
     SETTING_MOTION: selectedMotion === 0 ? 0 : 1,
@@ -159,6 +163,13 @@ function configuration() {
       {label: 'Follow tilt', value: '1'},
       {label: 'Full clockwise orbit', value: '2'}
     ]},
+    {type: 'select', messageKey: 'SETTING_ORBIT_SPEED', label: 'Orbit speed', defaultValue: '1', options: [
+      {label: 'Quick', value: '0'}, {label: 'Classic', value: '1'}, {label: 'Slow', value: '2'}
+    ]},
+    {type: 'select', messageKey: 'SETTING_SENSITIVITY', label: 'Gesture sensitivity', defaultValue: '1', options: [
+      {label: 'Gentle', value: '0'}, {label: 'Deliberate', value: '1'}
+    ]},
+    {type: 'text', defaultValue: 'Save previews one orbit when Full clockwise orbit is selected. Follow tilt responds to your wrist; None stays still. Sensitivity controls the tilt trigger, while a tap triggers an orbit in Full clockwise orbit mode.'},
     {type: 'heading', defaultValue: 'Custom day colors'},
     {type: 'text', defaultValue: 'Choose Custom colors above to use these colors. Day and night picks are independent.'},
     {type: 'color', messageKey: 'SETTING_BG', label: 'Day background', defaultValue: '0A1020', sunlight: false, allowGray: true},
@@ -181,8 +192,10 @@ if (migratedBeforeClay !== savedBeforeClay) {
 }
 var clay = new Clay(configuration(), null, {autoHandleEvents: false});
 
-function send(raw) {
-  Pebble.sendAppMessage(settingsMessage(raw), null, function (error) {
+function send(raw, preview) {
+  var message = settingsMessage(raw);
+  if (preview) message.SETTING_PREVIEW = 1;
+  Pebble.sendAppMessage(message, null, function (error) {
     console.log('Way Back settings send failed: ' + JSON.stringify(error));
   });
 }
@@ -200,7 +213,7 @@ Pebble.addEventListener('webviewclosed', function (event) {
   if (!event || !event.response || event.response === 'CANCELLED') return;
   try { clay.getSettings(event.response); }
   catch (error) { console.log('Way Back settings rejected: ' + error); return; }
-  send(localStorage.getItem('clay-settings'));
+  send(localStorage.getItem('clay-settings'), true);
 });
 
 if (typeof module !== 'undefined') {

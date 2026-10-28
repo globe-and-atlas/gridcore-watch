@@ -1,6 +1,23 @@
 # Session Log
 
-## Current Session
+## Current Session — 0.8.0 motion polish
+
+**Goal:** Add orbit speed, gesture sensitivity, Save preview, and calmer store GIFs.
+**Agent:** OpenAI Codex (gpt-6.1-sol)
+**Handoff-from:** OpenAI Codex
+**Handoff-type:** continuation
+**Status:** Complete. 0.8.0 is publicly Listed for Time 2 and Round 2. Physical-watch feel and battery use remain unverified.
+
+Preserve Classic 180 ms and Deliberate 360 mG summed-axis threshold defaults. Add Quick 90 ms / Slow 300 ms; Gentle threshold 220. Save redraws any selected style and starts one orbit only in Orbit mode. None stays static and Tilt remains wrist-driven.
+
+Native production checks passed on isolated Emery and Gabbro instances: ~90/180/300 ms steps, static None/Tilt Save preview, persisted Slow cadence after reinstall, and replacement orbit on repeated Save. Node settings events, two pytest tests, dual-target PBW verifier, GIF metadata, and fresh independent review passed. New GIFs have 27 frames, three looks, and 15.78-second loops; four stills per target are unchanged. The SDK JavaScript bridge reported install success while Emery still displayed stale T9; direct serial reinstall after dismissing the old crash restored Way Back. Evidence is in ignored `.tmp/qa080/`.
+
+Public verification: version 0.8.0, new bulleted description, two native GIFs, and four stills per platform are live. Public PBW is byte-identical to the production build (721,330 bytes; SHA256 `887fc1670e5539bd5fdb8195cdbfd71d408c3b85f51c79ed362b48d73b8f6422`). Both public GIFs match local bytes. Store PNG re-encoding changed 2 Emery and 45 Gabbro opaque palette pixels in the first still; other stills match visible pixels, with correct native dimensions and transparency. Private emulators stopped; shared emulators untouched. Evidence: `.tmp/public-080/verified.json` and `listing-full.png`.
+
+S.D.G.: Way Back wearers can choose comfortable motion and see their settings immediately; store visitors get readable previews.
+Feynman gap: Physical wrist sensitivity and battery cost need wearer testing; native emulator timing, Save behavior, persistence, and public assets were verified.
+
+## Previous Session
 
 **Goal:** Expose None, Follow tilt, and Full clockwise orbit as separate Way Back motion choices.
 **Agent:** OpenAI Codex (GPT-6.1-sol)
