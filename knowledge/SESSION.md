@@ -88,3 +88,4 @@ Feynman gap: Physical wrist sensitivity and battery cost need wearer testing; na
 - 2026-10-22 17:43 — commit: Fix Way Back left-wrist tilt with full echo orbit | README.md,execution/capture_store_media.py,knowledge/DECISIONS.md,knowledge/ERRORS.md,knowledge/INDEX.md
 - 2026-10-22 18:51 — commit: Add Way Back echo movement modes and release 0.7.2 | README.md,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/INDEX.md,knowledge/REFLECTIONS.jsonl
 - 2026-10-27 20:29 — commit: Add Way Back motion controls and publish 0.8.0 | README.md,execution/capture_store_media.py,execution/verify_watchface.py,knowledge/DECISIONS.md,knowledge/ERRORS.md
+- 2026-10-27 20:29 — commit: Archive published Way Back 0.8.0 bundle | knowledge/SESSION.md,release/Way-Back-0.8.0.pbw
